@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
@@ -13,12 +13,7 @@ export const Route = createFileRoute("/grammar")({
 
 function GrammarPage() {
   const { user, loading } = useAuth();
-  const navigate = useNavigate();
   const [done, setDone] = useState<Set<string>>(new Set());
-
-  useEffect(() => {
-    if (!loading && !user) navigate({ to: "/login" });
-  }, [loading, user, navigate]);
 
   useEffect(() => {
     if (!user) return;
@@ -26,7 +21,7 @@ function GrammarPage() {
     setLastActivity({ to: "/grammar", label: "Grammar lessons" });
   }, [user]);
 
-  if (!user) return null;
+  if (loading) return <LoadingState />;
 
   return (
     <main className="mx-auto max-w-2xl px-5 py-8 sm:py-12">
@@ -37,6 +32,32 @@ function GrammarPage() {
       <p className="mt-2 text-muted-foreground">
         Each lesson unlocks the next. Take your time.
       </p>
+
+      <section
+        className="mt-6 rounded-3xl border border-border/60 bg-accent/30 p-5"
+        style={{ boxShadow: "var(--shadow-soft)" }}
+      >
+        <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Start here</p>
+        <h2 className="mt-1 font-display text-2xl font-semibold text-foreground">
+          Learn → check → save progress
+        </h2>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Open any lesson to read the explanation, hear examples, then take the quiz. Your score updates your journey map automatically.
+        </p>
+        <Link
+          to="/grammar/$lessonId"
+          params={{ lessonId: lessons[0]!.id }}
+          className="mt-4 inline-flex min-h-[44px] items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground"
+          style={{ boxShadow: "var(--shadow-warm)" }}
+        >
+          Start first lesson <ArrowRight className="h-4 w-4" />
+        </Link>
+        {!user && (
+          <p className="mt-3 text-xs text-muted-foreground">
+            You can try lessons as a guest. Sign in only when you want your progress saved.
+          </p>
+        )}
+      </section>
 
       <ol className="mt-8 space-y-3">
         {lessons.map((l, idx) => {
@@ -67,6 +88,14 @@ function GrammarPage() {
           );
         })}
       </ol>
+    </main>
+  );
+}
+
+function LoadingState() {
+  return (
+    <main className="mx-auto flex min-h-screen max-w-2xl items-center justify-center px-5 py-12">
+      <p className="font-display text-3xl italic text-muted-foreground">Un momento…</p>
     </main>
   );
 }

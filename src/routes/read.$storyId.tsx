@@ -1,6 +1,6 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { ArrowLeft, Volume2, Sparkles, Check, X } from "lucide-react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState } from "react";
+import { ArrowLeft, Volume2, Sparkles, Check, X, ArrowRight } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { storyById } from "@/components/italian/stories";
 import { speakIt } from "@/lib/speak";
@@ -13,7 +13,6 @@ export const Route = createFileRoute("/read/$storyId")({
 
 function StoryPage() {
   const { user, loading } = useAuth();
-  const navigate = useNavigate();
   const { storyId } = Route.useParams();
   const story = storyById(storyId);
   const [showQuiz, setShowQuiz] = useState(false);
@@ -22,9 +21,13 @@ function StoryPage() {
   const [score, setScore] = useState(0);
   const [done, setDone] = useState(false);
 
-  useEffect(() => {
-    if (!loading && !user) navigate({ to: "/login" });
-  }, [loading, user, navigate]);
+  if (loading) {
+    return (
+      <main className="mx-auto flex min-h-screen max-w-2xl items-center justify-center px-5 py-12">
+        <p className="font-display text-3xl italic text-muted-foreground">Un momento…</p>
+      </main>
+    );
+  }
 
   if (!story) {
     return (
@@ -34,11 +37,11 @@ function StoryPage() {
       </main>
     );
   }
-  if (!user) return null;
-
   const finish = async (final: number) => {
-    await completeStory(user.id, story.id);
-    await awardXp(user.id, 10 + final * 5);
+    if (user) {
+      await completeStory(user.id, story.id);
+      await awardXp(user.id, 10 + final * 5);
+    }
     setDone(true);
   };
 
@@ -52,14 +55,18 @@ function StoryPage() {
           <Sparkles className="mx-auto h-10 w-10 text-primary" />
           <h3 className="mt-3 font-display text-3xl font-semibold">Storia finita!</h3>
           <p className="mt-1 text-muted-foreground">
-            {score} / {story.questions.length} comprehension · +{10 + score * 5} XP
+            {score} / {story.questions.length} comprehension
+          </p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {user ? `Saved to your journey · +${10 + score * 5} XP` : "Great job. Sign in if you want this story progress saved and used to guide what comes next."}
           </p>
           <Link
-            to="/read"
-            className="mt-6 inline-block rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground hover:opacity-90"
+            to={user ? "/read" : "/login"}
+            className="mt-6 inline-flex min-h-[44px] items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground hover:opacity-90"
             style={{ boxShadow: "var(--shadow-warm)" }}
           >
-            More stories
+            {user ? "More stories" : "Sign in to save progress"}
+            <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
       </main>
@@ -140,6 +147,11 @@ function StoryPage() {
         <div className="text-3xl">{story.emoji}</div>
         <h1 className="mt-1 text-4xl font-semibold text-foreground sm:text-5xl">{story.title}</h1>
         <p className="text-muted-foreground">{story.blurb} · <span className="font-mono text-xs">{story.level}</span></p>
+        {!user && (
+          <p className="mt-2 text-sm text-muted-foreground">
+            Try the story and comprehension check now. Sign in later to save it to your journey.
+          </p>
+        )}
       </header>
 
       <article

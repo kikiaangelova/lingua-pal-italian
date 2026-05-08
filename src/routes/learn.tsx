@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { useAuth } from "@/lib/auth";
@@ -13,12 +13,7 @@ export const Route = createFileRoute("/learn")({
 
 function LearnPage() {
   const { user, loading } = useAuth();
-  const navigate = useNavigate();
   const [learned, setLearned] = useState<Set<string>>(new Set());
-
-  useEffect(() => {
-    if (!loading && !user) navigate({ to: "/login" });
-  }, [loading, user, navigate]);
 
   useEffect(() => {
     if (!user) return;
@@ -26,7 +21,13 @@ function LearnPage() {
     setLastActivity({ to: "/learn", label: "Vocabulary decks" });
   }, [user]);
 
-  if (!user) return null;
+  if (loading) {
+    return (
+      <main className="mx-auto flex min-h-screen max-w-2xl items-center justify-center px-5 py-12">
+        <p className="font-display text-3xl italic text-muted-foreground">Un momento…</p>
+      </main>
+    );
+  }
 
   return (
     <main className="mx-auto max-w-2xl px-5 py-8 sm:py-12">
@@ -35,6 +36,11 @@ function LearnPage() {
         Vocabulary <em className="font-display italic text-primary">decks</em>
       </h1>
       <p className="mt-2 text-muted-foreground">Pick a topic. Flip cards, take the quiz, earn XP.</p>
+      {!user && (
+        <p className="mt-2 text-sm text-muted-foreground">
+          Try any deck now. Sign in only when you want your learned words and XP saved.
+        </p>
+      )}
 
       <div className="mt-8 grid gap-3 sm:grid-cols-2">
         {categories.map((c) => {

@@ -1,6 +1,6 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { Mic, Square, Play, Volume2, Sparkles } from "lucide-react";
+import { Mic, Square, Play, Volume2, Sparkles, ArrowRight } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { speakIt } from "@/lib/speak";
 import { VoicePicker } from "@/components/italian/VoicePicker";
@@ -33,10 +33,6 @@ function dailyPick<T>(arr: T[], n: number): T[] {
 
 function SpeakPage() {
   const { user, loading } = useAuth();
-  const navigate = useNavigate();
-  useEffect(() => {
-    if (!loading && !user) navigate({ to: "/login" });
-  }, [loading, user, navigate]);
 
   useEffect(() => {
     if (user) setLastActivity({ to: "/speak", label: "Speaking practice" });
@@ -53,7 +49,14 @@ function SpeakPage() {
   const chunksRef = useRef<Blob[]>([]);
   const [streamRef] = useState<{ stream: MediaStream | null }>({ stream: null });
 
-  if (!user) return null;
+  if (loading) {
+    return (
+      <main className="mx-auto flex min-h-screen max-w-2xl items-center justify-center px-5 py-12">
+        <p className="font-display text-3xl italic text-muted-foreground">Un momento…</p>
+      </main>
+    );
+  }
+
   const phrase = phrases[i];
 
   const startRec = async () => {
@@ -87,8 +90,12 @@ function SpeakPage() {
   };
 
   const next = async () => {
-    await awardXp(user.id, 5);
-    toast.success("+5 XP", { duration: 1000 });
+    if (user) {
+      await awardXp(user.id, 5);
+      toast.success("+5 XP", { duration: 1000 });
+    } else {
+      toast.success("Great repetition", { duration: 1000 });
+    }
     if (i + 1 < phrases.length) setI(i + 1);
     else setI(0);
   };
@@ -102,6 +109,11 @@ function SpeakPage() {
       <p className="mt-2 text-muted-foreground">
         Listen, repeat, then play yourself back. Mimic the rhythm.
       </p>
+      {!user && (
+        <p className="mt-2 text-sm text-muted-foreground">
+          You can practice speaking right away. Sign in when you want your effort counted in progress.
+        </p>
+      )}
 
       <div className="mt-4 text-sm text-muted-foreground">Phrase {i + 1} / {phrases.length}</div>
 
@@ -158,12 +170,22 @@ function SpeakPage() {
       </section>
 
       <div className="mt-6 flex justify-end">
-        <button
-          onClick={next}
-          className="inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-2.5 text-sm font-medium text-background hover:opacity-90"
-        >
-          <Sparkles className="h-4 w-4" /> Next phrase
-        </button>
+        <div className="flex flex-wrap items-center justify-end gap-3">
+          {!user && (
+            <Link
+              to="/login"
+              className="inline-flex min-h-[44px] items-center gap-2 rounded-full border border-border bg-background px-5 py-2.5 text-sm font-medium text-foreground hover:bg-muted"
+            >
+              Save my practice <ArrowRight className="h-4 w-4" />
+            </Link>
+          )}
+          <button
+            onClick={next}
+            className="inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-2.5 text-sm font-medium text-background hover:opacity-90"
+          >
+            <Sparkles className="h-4 w-4" /> Next phrase
+          </button>
+        </div>
       </div>
     </main>
   );
