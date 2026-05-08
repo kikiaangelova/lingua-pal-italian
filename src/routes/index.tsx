@@ -1,11 +1,13 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Sparkles, Volume2, BookOpen, Mic, GraduationCap, ScrollText, Flame, Trophy } from "lucide-react";
+import { Sparkles, Volume2, BookOpen, Mic, GraduationCap, ScrollText, Flame, Trophy, ArrowRight, UserPlus, Check } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { fetchProgress, levelFor, DAILY_GOAL } from "@/lib/progress";
 import { wordOfDay } from "@/components/italian/data";
 import { speakIt } from "@/lib/speak";
 import { supabase } from "@/integrations/supabase/client";
+import bgVideo from "@/assets/italy-bg.mp4.asset.json";
+import avatarDemo from "@/assets/avatar-demo.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -47,6 +49,7 @@ function Dashboard() {
     daily_date: string | null;
   } | null>(null);
   const [name, setName] = useState<string>("");
+  const [following, setFollowing] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -72,17 +75,72 @@ function Dashboard() {
   const lvl = levelFor(progress?.xp ?? 0);
 
   return (
-    <main className="mx-auto max-w-2xl px-5 py-8 sm:py-12">
-      <header className="flex items-start justify-between gap-4">
-        <div>
-          <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card/70 px-3 py-1 text-xs uppercase tracking-[0.25em] text-muted-foreground backdrop-blur">
-            <Sparkles className="h-3 w-3 text-primary" /> Ciao{name ? `, ${name}` : ""}
+    <main className="mx-auto max-w-3xl px-5 pb-16 pt-6">
+      {/* HERO with video bg */}
+      <section className="relative overflow-hidden rounded-[2rem] border border-white/20 shadow-2xl">
+        <video
+          src={bgVideo.url}
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-black/40 to-primary/40" />
+        <div className="relative z-10 px-6 py-14 sm:px-10 sm:py-20">
+          <span className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.3em] text-white backdrop-blur">
+            <Sparkles className="h-3 w-3" /> Ciao{name ? `, ${name}` : ""}
           </span>
-          <h1 className="mt-3 text-4xl font-semibold leading-tight text-foreground sm:text-5xl">
-            Pronto per <em className="font-display italic text-primary">imparare?</em>
+          <h1 className="mt-4 text-5xl font-extrabold leading-[0.9] text-white sm:text-7xl">
+            Learn italian
+            <br />
+            <span
+              className="bg-clip-text text-transparent"
+              style={{ backgroundImage: "var(--gradient-zest)" }}
+            >
+              is easy.
+            </span>
           </h1>
+          <p className="mt-4 max-w-md text-base text-white/80 sm:text-lg">
+            Not blocks. Not boring drills. Live the <em>vibe</em> — fashion, food, sport, culture — with Luca, your AI mentor.
+          </p>
+          <Link
+            to="/tutor"
+            className="mt-6 inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-bold text-foreground transition hover:scale-105"
+            style={{ boxShadow: "var(--shadow-warm)" }}
+          >
+            Talk to Luca <ArrowRight className="h-4 w-4" />
+          </Link>
         </div>
-      </header>
+      </section>
+
+      {/* Profile card */}
+      <section className="-mt-8 mx-auto flex max-w-md items-center gap-4 rounded-3xl border border-white/30 bg-white/60 p-4 backdrop-blur-xl dark:bg-white/5"
+        style={{ boxShadow: "var(--shadow-soft)" }}
+      >
+        <img
+          src={avatarDemo}
+          alt="Profile"
+          width={64}
+          height={64}
+          className="h-16 w-16 rounded-full object-cover ring-2 ring-primary"
+        />
+        <div className="flex-1 min-w-0">
+          <div className="font-display text-lg leading-tight">{name || "Studente"}</div>
+          <div className="text-xs text-muted-foreground">{lvl.current.name} · {progress?.xp ?? 0} XP</div>
+        </div>
+        <button
+          onClick={() => setFollowing((v) => !v)}
+          className={
+            "inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-bold transition hover:scale-105 " +
+            (following
+              ? "bg-muted text-foreground"
+              : "bg-primary text-primary-foreground")
+          }
+        >
+          {following ? <><Check className="h-3.5 w-3.5" /> Following</> : <><UserPlus className="h-3.5 w-3.5" /> Follow</>}
+        </button>
+      </section>
 
       {/* Streak + Level + Daily goal */}
       <section className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3">
@@ -135,7 +193,7 @@ function Dashboard() {
       </section>
 
       {/* Pillars */}
-      <section className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <section className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
         <Tile to="/learn" icon={<BookOpen className="h-6 w-6" />} title="Vocab" subtitle="Decks & quiz" />
         <Tile to="/speak" icon={<Mic className="h-6 w-6" />} title="Speak" subtitle="Listen & repeat" />
         <Tile to="/grammar" icon={<GraduationCap className="h-6 w-6" />} title="Grammar" subtitle="Step by step" />
