@@ -144,7 +144,7 @@ Deno.serve(async (req) => {
           status: 402,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
-      return new Response(JSON.stringify({ error: errText || `AI error ${resp.status}` }), {
+      return new Response(JSON.stringify({ error: "AI service unavailable" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -223,7 +223,8 @@ Deno.serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
     });
   } catch (e) {
-    return new Response(JSON.stringify({ error: (e as Error).message }), {
+    console.error("tutor-chat error", e);
+    return new Response(JSON.stringify({ error: "Internal server error" }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
