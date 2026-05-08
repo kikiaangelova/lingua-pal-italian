@@ -466,10 +466,12 @@ function Tile({
   title: string;
   subtitle: string;
 }) {
+  const navigate = useNavigate();
   return (
-    <Link
-      to={to}
-      className="group rounded-2xl border border-border/60 bg-card p-4 transition hover:-translate-y-0.5 hover:border-primary/40"
+    <button
+      type="button"
+      onClick={() => navigate({ to: to as any })}
+      className="group block w-full cursor-pointer rounded-2xl border border-border/60 bg-card p-4 text-left transition active:scale-[0.98] hover:-translate-y-0.5 hover:border-primary/40 min-h-[88px]"
       style={{ boxShadow: "var(--shadow-soft)" }}
     >
       <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent text-accent-foreground transition group-hover:scale-110">
@@ -477,6 +479,6 @@ function Tile({
       </div>
       <div className="mt-3 font-display text-xl font-semibold text-foreground">{title}</div>
       <div className="text-xs text-muted-foreground">{subtitle}</div>
-    </Link>
+    </button>
   );
 }
