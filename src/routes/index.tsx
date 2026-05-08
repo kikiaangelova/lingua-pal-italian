@@ -62,7 +62,8 @@ function GuestHome() {
 
         <div className="mt-6 flex flex-wrap gap-3">
           <Link
-            to="/learn/greetings"
+            to="/learn/$deckId"
+            params={{ deckId: "greetings" }}
             className="inline-flex min-h-[48px] items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-bold text-primary-foreground"
             style={{ boxShadow: "var(--shadow-warm)" }}
           >
@@ -80,7 +81,7 @@ function GuestHome() {
 
       <section className="mt-6 grid gap-3 sm:grid-cols-2">
         <Tile to="/speak" icon={<Mic className="h-6 w-6" />} title="Speak" subtitle="Hear Italian and repeat it now" />
-        <Tile to="/read/mattina-roma" icon={<ScrollText className="h-6 w-6" />} title="Read" subtitle="Open a mini-story and do the check" />
+        <Tile to="/read" icon={<ScrollText className="h-6 w-6" />} title="Read" subtitle="Open a mini-story and do the check" />
       </section>
 
       <section
