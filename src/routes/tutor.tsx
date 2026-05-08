@@ -1,9 +1,10 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { Send, Sparkles } from "lucide-react";
+import { Send, Sparkles, Brain } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { PageHeader } from "@/components/italian/PageHeader";
 import { setLastActivity } from "@/lib/last-activity";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/tutor")({
   head: () => ({
@@ -16,6 +17,9 @@ export const Route = createFileRoute("/tutor")({
 });
 
 type Msg = { role: "user" | "assistant"; content: string };
+
+const MISTAKE_RE = /\[\[mistake:[^\]]+\]\]/gi;
+const stripTags = (s: string) => s.replace(MISTAKE_RE, "").trim();
 
 function TutorPage() {
   const { user, loading } = useAuth();
@@ -35,9 +39,40 @@ function TutorPage() {
         "Ciao! Sono **Luca**, your Italian mentor. Tell me — what do you want to nail today: ordering an espresso ☕, flirting at an aperitivo 🍹, or surviving a Serie A match 🟦? **Prossimo passo →** type your goal.",
     },
   ]);
+  const [mistakes, setMistakes] = useState<{ topic: string; note: string | null; count: number }[]>([]);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Load prior conversation + tracked mistakes so Luca feels like he remembers
+  useEffect(() => {
+    if (!user) return;
+    (async () => {
+      const [{ data: hist }, { data: mks }] = await Promise.all([
+        supabase
+          .from("tutor_messages")
+          .select("role, content, created_at")
+          .eq("user_id", user.id)
+          .order("created_at", { ascending: true })
+          .limit(60),
+        supabase
+          .from("tutor_mistakes")
+          .select("topic, note, count")
+          .eq("user_id", user.id)
+          .order("last_seen", { ascending: false })
+          .limit(6),
+      ]);
+      if (hist && hist.length) {
+        setMessages(
+          hist.map((m: any) => ({
+            role: m.role as "user" | "assistant",
+            content: stripTags(m.content as string),
+          })),
+        );
+      }
+      if (mks) setMistakes(mks as any);
+    })();
+  }, [user]);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
@@ -53,7 +88,6 @@ function TutorPage() {
 
     try {
       const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/tutor-chat`;
-      const { supabase } = await import("@/integrations/supabase/client");
       const { data: sessionData } = await supabase.auth.getSession();
       const token = sessionData.session?.access_token;
       if (!token) throw new Error("Please sign in to use the tutor.");
@@ -93,7 +127,7 @@ function TutorPage() {
               acc += c;
               setMessages((prev) => {
                 const copy = [...prev];
-                copy[copy.length - 1] = { role: "assistant", content: acc };
+                copy[copy.length - 1] = { role: "assistant", content: stripTags(acc) };
                 return copy;
               });
             }
@@ -102,6 +136,16 @@ function TutorPage() {
             break;
           }
         }
+      }
+      // Refresh mistakes after a turn (server may have added new ones)
+      if (user) {
+        const { data: mks } = await supabase
+          .from("tutor_mistakes")
+          .select("topic, note, count")
+          .eq("user_id", user.id)
+          .order("last_seen", { ascending: false })
+          .limit(6);
+        if (mks) setMistakes(mks as any);
       }
     } catch (e) {
       setMessages((prev) => {
@@ -127,6 +171,22 @@ function TutorPage() {
         <h1 className="mt-2 font-display text-4xl font-bold leading-none">
           Luca <em className="italic text-primary">— il tuo mentore</em>
         </h1>
+        {mistakes.length > 0 && (
+          <div className="mt-3 rounded-2xl border border-border/60 bg-accent/40 p-3 text-xs">
+            <div className="mb-1 flex items-center gap-1.5 font-semibold text-foreground">
+              <Brain className="h-3.5 w-3.5 text-primary" /> Luca remembers
+            </div>
+            <ul className="space-y-0.5 text-muted-foreground">
+              {mistakes.map((m) => (
+                <li key={m.topic}>
+                  <span className="font-medium text-foreground">{m.topic}</span>
+                  {m.note ? ` — ${m.note}` : ""}
+                  {m.count > 1 ? ` (×${m.count})` : ""}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </header>
 
       <div
