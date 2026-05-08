@@ -1,4 +1,4 @@
-import { Link, useRouter } from "@tanstack/react-router";
+import { Link, useNavigate, useRouter } from "@tanstack/react-router";
 import { ArrowLeft, Home } from "lucide-react";
 
 type Crumb = { label: string; to?: string };
@@ -11,6 +11,7 @@ export function PageHeader({
   crumbs?: Crumb[];
 }) {
   const router = useRouter();
+  const navigate = useNavigate();
   const goBack = () => {
     if (typeof window !== "undefined" && window.history.length > 1) {
       router.history.back();
@@ -55,9 +56,13 @@ export function PageHeader({
             <span key={i} className="flex items-center gap-1">
               <span aria-hidden>›</span>
               {c.to ? (
-                <a href={c.to} className="hover:text-foreground">
+                <button
+                  type="button"
+                  onClick={() => navigate({ to: c.to as any })}
+                  className="hover:text-foreground"
+                >
                   {c.label}
-                </a>
+                </button>
               ) : (
                 <span className="text-foreground">{c.label}</span>
               )}
