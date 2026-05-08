@@ -6,6 +6,7 @@ import { deckById } from "@/components/italian/data";
 import { Flashcard } from "@/components/italian/Flashcard";
 import { speakIt } from "@/lib/speak";
 import { awardXp, markWordLearned } from "@/lib/progress";
+import { setLastActivity } from "@/lib/last-activity";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/learn/$deckId")({
