@@ -125,13 +125,15 @@ Deno.serve(async (req) => {
       method: "POST",
       headers: { Authorization: `Bearer ${KEY}`, "Content-Type": "application/json" },
       body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
+        model: "google/gemini-2.5-flash",
         stream: true,
         messages: [{ role: "system", content: SYSTEM + memoryNote }, ...merged],
       }),
     });
 
     if (!resp.ok) {
+      const errText = await resp.text().catch(() => "");
+      console.error("AI gateway error", resp.status, errText);
       if (resp.status === 429)
         return new Response(JSON.stringify({ error: "Rate limit. Riprova tra poco." }), {
           status: 429,
@@ -142,8 +144,7 @@ Deno.serve(async (req) => {
           status: 402,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
-      const t = await resp.text();
-      return new Response(JSON.stringify({ error: t }), {
+      return new Response(JSON.stringify({ error: errText || `AI error ${resp.status}` }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
