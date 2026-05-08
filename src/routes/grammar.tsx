@@ -4,6 +4,8 @@ import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { lessons } from "@/components/italian/lessons";
 import { fetchCompletedLessons } from "@/lib/progress";
+import { PageHeader } from "@/components/italian/PageHeader";
+import { setLastActivity } from "@/lib/last-activity";
 
 export const Route = createFileRoute("/grammar")({
   component: GrammarPage,
@@ -21,12 +23,14 @@ function GrammarPage() {
   useEffect(() => {
     if (!user) return;
     fetchCompletedLessons(user.id).then((d) => setDone(new Set(d.map((x) => x.lesson_id))));
+    setLastActivity({ to: "/grammar", label: "Grammar lessons" });
   }, [user]);
 
   if (!user) return null;
 
   return (
     <main className="mx-auto max-w-2xl px-5 py-8 sm:py-12">
+      <PageHeader title="Grammar" crumbs={[{ label: "Grammar" }]} />
       <h1 className="text-4xl font-semibold text-foreground sm:text-5xl">
         Grammar, <em className="font-display italic text-primary">passo a passo</em>
       </h1>

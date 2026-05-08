@@ -8,6 +8,7 @@ import { speakIt } from "@/lib/speak";
 import { supabase } from "@/integrations/supabase/client";
 import bgVideo from "@/assets/italy-bg.mp4.asset.json";
 import avatarDemo from "@/assets/avatar-demo.jpg";
+import { getLastActivity } from "@/lib/last-activity";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -80,6 +81,9 @@ function Dashboard() {
   const dailyXp = progress?.daily_date === today ? progress?.daily_xp ?? 0 : 0;
   const goalPct = Math.min(100, Math.round((dailyXp / DAILY_GOAL) * 100));
   const lvl = levelFor(progress?.xp ?? 0);
+  const last = getLastActivity();
+  const continueTo = last?.to ?? "/learn";
+  const continueLabel = last?.label ?? "Vocabulary decks";
 
   return (
     <main className="mx-auto max-w-3xl px-5 pb-16 pt-6">
@@ -119,6 +123,27 @@ function Dashboard() {
             Talk to Luca <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
+      </section>
+
+      {/* Continue learning */}
+      <section
+        className="mt-6 flex items-center justify-between gap-4 rounded-3xl border border-border/60 bg-card p-5"
+        style={{ boxShadow: "var(--shadow-warm)" }}
+      >
+        <div className="min-w-0">
+          <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">
+            {last ? "Continue learning" : "Start learning"}
+          </p>
+          <h2 className="mt-1 truncate font-display text-2xl font-semibold text-foreground">
+            {continueLabel}
+          </h2>
+        </div>
+        <a
+          href={continueTo}
+          className="inline-flex shrink-0 items-center gap-2 rounded-full bg-primary px-5 py-3 text-sm font-bold text-primary-foreground transition hover:scale-105"
+        >
+          {last ? "Continue" : "Start"} <ArrowRight className="h-4 w-4" />
+        </a>
       </section>
 
       {/* Profile card */}

@@ -4,6 +4,8 @@ import { ArrowRight } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { categories } from "@/components/italian/data";
 import { fetchLearnedWords } from "@/lib/progress";
+import { PageHeader } from "@/components/italian/PageHeader";
+import { setLastActivity } from "@/lib/last-activity";
 
 export const Route = createFileRoute("/learn")({
   component: LearnPage,
@@ -21,12 +23,14 @@ function LearnPage() {
   useEffect(() => {
     if (!user) return;
     fetchLearnedWords(user.id).then((w) => setLearned(new Set(w.map((x) => x.word_it))));
+    setLastActivity({ to: "/learn", label: "Vocabulary decks" });
   }, [user]);
 
   if (!user) return null;
 
   return (
     <main className="mx-auto max-w-2xl px-5 py-8 sm:py-12">
+      <PageHeader title="Vocabulary" crumbs={[{ label: "Vocabulary" }]} />
       <h1 className="text-4xl font-semibold text-foreground sm:text-5xl">
         Vocabulary <em className="font-display italic text-primary">decks</em>
       </h1>
