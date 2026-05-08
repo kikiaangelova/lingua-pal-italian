@@ -65,9 +65,31 @@ function Dashboard() {
         daily_date: p?.daily_date ?? null,
       }),
     );
-    fetchCompletedLessons(user.id).then((rows) =>
-      setCompletedIds(new Set(rows.map((r) => r.lesson_id))),
-    );
+    const reloadLessons = () =>
+      fetchCompletedLessons(user.id).then((rows) =>
+        setCompletedIds(new Set(rows.map((r) => r.lesson_id))),
+      );
+    reloadLessons();
+
+    // Realtime: refresh journey when a lesson is completed
+    const channel = supabase
+      .channel(`lesson-completion-${user.id}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "lesson_completion",
+          filter: `user_id=eq.${user.id}`,
+        },
+        () => reloadLessons(),
+      )
+      .subscribe();
+
+    // Refresh whenever the tab regains focus
+    const onFocus = () => reloadLessons();
+    window.addEventListener("focus", onFocus);
+
     supabase
       .from("profiles")
       .select("display_name, onboarded")
@@ -80,6 +102,11 @@ function Dashboard() {
         }
         setName(data?.display_name ?? "");
       });
+
+    return () => {
+      supabase.removeChannel(channel);
+      window.removeEventListener("focus", onFocus);
+    };
   }, [user, navigate]);
 
   const today = new Date().toISOString().slice(0, 10);
