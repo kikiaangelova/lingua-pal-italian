@@ -144,7 +144,7 @@ function ProfilePage() {
 
       <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
         <button
-          onClick={() => navigate({ to: (last?.to ?? "/learn") as string })}
+          onClick={() => navigate({ to: (last?.to ?? "/learn") as any })}
           className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground hover:opacity-90"
           style={{ boxShadow: "var(--shadow-warm)" }}
         >

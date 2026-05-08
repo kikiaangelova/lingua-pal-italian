@@ -280,12 +280,13 @@ function Dashboard() {
             {continueLabel}
           </h2>
         </div>
-        <Link
-          to={continueTo}
+        <button
+          type="button"
+          onClick={() => navigate({ to: continueTo as any })}
           className="inline-flex min-h-[44px] shrink-0 items-center gap-2 rounded-full bg-primary px-4 py-2.5 text-sm font-bold text-primary-foreground transition active:scale-95 sm:px-5 sm:py-3 sm:hover:scale-105"
         >
           {last ? "Continue" : "Start"} <ArrowRight className="h-4 w-4" />
-        </Link>
+        </button>
       </section>
 
       {/* Profile card */}
@@ -466,10 +467,12 @@ function Tile({
   title: string;
   subtitle: string;
 }) {
+  const navigate = useNavigate();
   return (
-    <Link
-      to={to}
-      className="group rounded-2xl border border-border/60 bg-card p-4 transition hover:-translate-y-0.5 hover:border-primary/40"
+    <button
+      type="button"
+      onClick={() => navigate({ to: to as any })}
+      className="group block w-full cursor-pointer rounded-2xl border border-border/60 bg-card p-4 text-left transition active:scale-[0.98] hover:-translate-y-0.5 hover:border-primary/40 min-h-[88px]"
       style={{ boxShadow: "var(--shadow-soft)" }}
     >
       <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent text-accent-foreground transition group-hover:scale-110">
@@ -477,6 +480,6 @@ function Tile({
       </div>
       <div className="mt-3 font-display text-xl font-semibold text-foreground">{title}</div>
       <div className="text-xs text-muted-foreground">{subtitle}</div>
-    </Link>
+    </button>
   );
 }
