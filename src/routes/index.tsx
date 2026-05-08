@@ -42,6 +42,7 @@ function LoadingSplash() {
 
 function Dashboard() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [progress, setProgress] = useState<{
     xp: number;
     streak: number;
