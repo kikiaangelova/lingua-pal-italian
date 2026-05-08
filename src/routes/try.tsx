@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Volume2, ArrowRight, Sparkles, Check } from "lucide-react";
 import { speakIt, loadVoices } from "@/lib/speak";
+import italyHero from "@/assets/italy-hero.mp4.asset.json";
 
 export const Route = createFileRoute("/try")({
   head: () => ({
@@ -42,7 +43,19 @@ function TryPage() {
   const done = heard.size >= 3;
 
   return (
-    <main className="mx-auto max-w-2xl px-5 pb-16 pt-6">
+    <main className="relative mx-auto max-w-2xl px-5 pb-16 pt-6">
+      {/* Cinematic Italy background */}
+      <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
+        <video
+          src={italyHero.url}
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="h-full w-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/85 to-background" />
+      </div>
       <div className="text-center">
         <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card/70 px-3 py-1 text-xs uppercase tracking-[0.25em] text-muted-foreground backdrop-blur">
           <Sparkles className="h-3 w-3 text-primary" /> Free sample · no sign-up
