@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, Check, X, Volume2, Sparkles, ArrowRight } from "lucide-react";
+import { ArrowLeft, Check, X, Volume2, Sparkles, ArrowRight, Loader2, Link2 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { deckById } from "@/components/italian/data";
 import { Flashcard } from "@/components/italian/Flashcard";
@@ -112,6 +112,13 @@ function Quiz({
   const [picked, setPicked] = useState<string | null>(null);
   const [score, setScore] = useState(0);
   const [done, setDone] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  const copyDeepLink = () => {
+    const url = `${window.location.origin}/learn/${deck!.id}`;
+    navigator.clipboard?.writeText(url);
+    toast.success("Deck link copied");
+  };
 
   if (done) {
     return (
@@ -119,13 +126,19 @@ function Quiz({
         className="rounded-3xl border border-border/60 bg-card p-8 text-center"
         style={{ boxShadow: "var(--shadow-warm)" }}
       >
-        <Sparkles className="mx-auto h-10 w-10 text-primary" />
+        {saving ? (
+          <Loader2 className="mx-auto h-10 w-10 animate-spin text-primary" />
+        ) : (
+          <Sparkles className="mx-auto h-10 w-10 text-primary" />
+        )}
         <h3 className="mt-3 font-display text-3xl font-semibold">Bravissimo!</h3>
         <p className="mt-1 text-muted-foreground">
           You got <span className="font-semibold text-foreground">{score}</span> /{" "}
           {questions.length} correct.
         </p>
-        <p className="mt-1 text-sm text-primary">+{score * 10} XP earned</p>
+        <p className="mt-1 text-sm text-primary">
+          {saving ? "Saving your progress…" : `+${score * 10} XP earned`}
+        </p>
         {!userId && (
           <Link
             to="/login"
@@ -135,18 +148,26 @@ function Quiz({
             Sign in to save these words <ArrowRight className="h-4 w-4" />
           </Link>
         )}
-        <button
-          onClick={() => {
-            setI(0);
-            setScore(0);
-            setPicked(null);
-            setDone(false);
-          }}
-          className="mt-6 rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground hover:opacity-90"
-          style={{ boxShadow: "var(--shadow-warm)" }}
-        >
-          Play again
-        </button>
+        <div className="mt-6 flex flex-wrap justify-center gap-2">
+          <button
+            onClick={() => {
+              setI(0);
+              setScore(0);
+              setPicked(null);
+              setDone(false);
+            }}
+            className="rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground hover:opacity-90"
+            style={{ boxShadow: "var(--shadow-warm)" }}
+          >
+            Play again
+          </button>
+          <button
+            onClick={copyDeepLink}
+            className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-5 py-2.5 text-sm font-medium text-foreground hover:bg-muted"
+          >
+            <Link2 className="h-4 w-4" /> Share deck
+          </button>
+        </div>
       </div>
     );
   }
@@ -160,9 +181,14 @@ function Quiz({
     if (ok) {
       setScore((s) => s + 1);
       if (userId) {
-        await markWordLearned(userId, deck!.id, q.phrase.it);
-        await awardXp(userId, 10);
-        toast.success("+10 XP", { duration: 1200 });
+        setSaving(true);
+        try {
+          await markWordLearned(userId, deck!.id, q.phrase.it);
+          await awardXp(userId, 10);
+          toast.success("+10 XP saved", { duration: 1200 });
+        } finally {
+          setSaving(false);
+        }
       } else {
         toast.success("Correct!", { duration: 1200 });
       }
@@ -180,7 +206,10 @@ function Quiz({
     <div>
       <div className="flex items-center justify-between text-sm text-muted-foreground">
         <span>Question {i + 1} / {questions.length}</span>
-        <span>Score: {score}</span>
+        <span className="inline-flex items-center gap-1.5">
+          {saving && <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />}
+          Score: {score}
+        </span>
       </div>
       <div
         className="mt-3 rounded-3xl border border-border/60 bg-card p-8 text-center"
