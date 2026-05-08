@@ -134,9 +134,15 @@ function AppShell() {
   const loc = useLocation();
   const onLogin = loc.pathname === "/login";
   return (
-    <div className="min-h-screen" style={{ paddingBottom: !loading && user && !onLogin ? "calc(72px + env(safe-area-inset-bottom))" : 0 }}>
+    <div
+      className="min-h-screen"
+      style={{
+        paddingBottom:
+          !loading && !onLogin ? "calc(72px + env(safe-area-inset-bottom))" : 0,
+      }}
+    >
       <Outlet />
-      {!loading && user && !onLogin ? <BottomNav /> : null}
+      {!loading && !onLogin ? <BottomNav /> : null}
     </div>
   );
 }
