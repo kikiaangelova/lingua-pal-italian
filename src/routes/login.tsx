@@ -1,0 +1,142 @@
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/lib/auth";
+import { toast } from "sonner";
+import { Sparkles } from "lucide-react";
+
+export const Route = createFileRoute("/login")({
+  component: LoginPage,
+});
+
+function LoginPage() {
+  const { user, loading } = useAuth();
+  const navigate = useNavigate();
+  const [mode, setMode] = useState<"login" | "signup">("login");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    if (!loading && user) navigate({ to: "/" });
+  }, [user, loading, navigate]);
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setBusy(true);
+    try {
+      if (mode === "signup") {
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            emailRedirectTo: window.location.origin,
+            data: { display_name: name || email.split("@")[0] },
+          },
+        });
+        if (error) throw error;
+        toast.success("Benvenuto! Account created.");
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        toast.success("Bentornato!");
+      }
+    } catch (err: any) {
+      toast.error(err.message ?? "Something went wrong");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <main className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-5 py-10">
+      <div className="text-center">
+        <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card/70 px-3 py-1 text-xs uppercase tracking-[0.25em] text-muted-foreground backdrop-blur">
+          <Sparkles className="h-3 w-3 text-primary" /> Ciao!
+        </span>
+        <h1 className="mt-4 text-5xl font-semibold leading-tight text-foreground">
+          Impara <em className="font-display italic text-primary">l'italiano.</em>
+        </h1>
+        <p className="mt-2 text-muted-foreground">Sign in to save your streak & progress.</p>
+      </div>
+
+      <form
+        onSubmit={submit}
+        className="mt-8 rounded-3xl border border-border/60 bg-card p-6"
+        style={{ boxShadow: "var(--shadow-soft)" }}
+      >
+        <div className="mb-4 flex rounded-full bg-muted p-1 text-sm font-medium">
+          {(["login", "signup"] as const).map((m) => (
+            <button
+              type="button"
+              key={m}
+              onClick={() => setMode(m)}
+              className={
+                "flex-1 rounded-full px-3 py-2 transition " +
+                (mode === m ? "bg-card text-foreground shadow-sm" : "text-muted-foreground")
+              }
+            >
+              {m === "login" ? "Sign in" : "Sign up"}
+            </button>
+          ))}
+        </div>
+
+        {mode === "signup" && (
+          <Field
+            label="Your name"
+            value={name}
+            onChange={setName}
+            placeholder="Maria"
+            type="text"
+          />
+        )}
+        <Field label="Email" value={email} onChange={setEmail} placeholder="you@example.com" type="email" />
+        <Field label="Password" value={password} onChange={setPassword} placeholder="••••••••" type="password" />
+
+        <button
+          type="submit"
+          disabled={busy}
+          className="mt-2 w-full rounded-full bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground transition hover:opacity-90 disabled:opacity-60"
+          style={{ boxShadow: "var(--shadow-warm)" }}
+        >
+          {busy ? "Un momento…" : mode === "login" ? "Sign in" : "Create account"}
+        </button>
+      </form>
+
+      <p className="mt-6 text-center text-xs italic text-muted-foreground">
+        Buon viaggio nella lingua italiana 🇮🇹
+      </p>
+    </main>
+  );
+}
+
+function Field({
+  label,
+  value,
+  onChange,
+  placeholder,
+  type,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  placeholder: string;
+  type: string;
+}) {
+  return (
+    <label className="mb-3 block">
+      <span className="mb-1 block text-xs font-medium uppercase tracking-wider text-muted-foreground">
+        {label}
+      </span>
+      <input
+        type={type}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        required
+        className="w-full rounded-xl border border-input bg-background px-4 py-3 text-foreground outline-none transition focus:border-primary"
+      />
+    </label>
+  );
+}
