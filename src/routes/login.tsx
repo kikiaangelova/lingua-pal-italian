@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { toast } from "sonner";
 import { Sparkles } from "lucide-react";
+import { lovable } from "@/integrations/lovable";
 
 export const Route = createFileRoute("/login")({
   component: LoginPage,
@@ -44,6 +45,22 @@ function LoginPage() {
       }
     } catch (err: any) {
       toast.error(err.message ?? "Something went wrong");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const googleSignIn = async () => {
+    setBusy(true);
+    try {
+      const result = await lovable.auth.signInWithOAuth("google", {
+        redirect_uri: window.location.origin,
+      });
+      if (result.error) throw result.error;
+      if (result.redirected) return;
+      navigate({ to: "/" });
+    } catch (err: any) {
+      toast.error(err.message ?? "Google sign-in failed");
     } finally {
       setBusy(false);
     }
@@ -101,6 +118,22 @@ function LoginPage() {
           style={{ boxShadow: "var(--shadow-warm)" }}
         >
           {busy ? "Un momento…" : mode === "login" ? "Sign in" : "Create account"}
+        </button>
+
+        <div className="my-5 flex items-center gap-3 text-[10px] uppercase tracking-widest text-muted-foreground">
+          <div className="h-px flex-1 bg-border" /> oppure <div className="h-px flex-1 bg-border" />
+        </div>
+
+        <button
+          type="button"
+          onClick={googleSignIn}
+          disabled={busy}
+          className="flex w-full items-center justify-center gap-3 rounded-full border border-border bg-background px-5 py-3 text-sm font-semibold text-foreground transition hover:bg-muted disabled:opacity-60"
+        >
+          <svg className="h-5 w-5" viewBox="0 0 24 24" aria-hidden>
+            <path fill="#EA4335" d="M12 10.2v3.9h5.5c-.24 1.4-1.7 4.1-5.5 4.1-3.3 0-6-2.7-6-6.1S8.7 6 12 6c1.9 0 3.1.8 3.8 1.5l2.6-2.5C16.9 3.6 14.7 2.7 12 2.7 6.9 2.7 2.7 6.9 2.7 12s4.2 9.3 9.3 9.3c5.4 0 8.9-3.8 8.9-9.1 0-.6-.07-1.1-.16-1.6H12z"/>
+          </svg>
+          Continue with Google
         </button>
       </form>
 
