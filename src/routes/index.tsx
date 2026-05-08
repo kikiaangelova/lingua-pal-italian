@@ -280,12 +280,13 @@ function Dashboard() {
             {continueLabel}
           </h2>
         </div>
-        <Link
-          to={continueTo}
+        <button
+          type="button"
+          onClick={() => navigate({ to: continueTo as any })}
           className="inline-flex min-h-[44px] shrink-0 items-center gap-2 rounded-full bg-primary px-4 py-2.5 text-sm font-bold text-primary-foreground transition active:scale-95 sm:px-5 sm:py-3 sm:hover:scale-105"
         >
           {last ? "Continue" : "Start"} <ArrowRight className="h-4 w-4" />
-        </Link>
+        </button>
       </section>
 
       {/* Profile card */}
