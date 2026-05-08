@@ -1,93 +1,49 @@
+## Navigation redesign — Italian app
 
-# Ciao — Your Italian Learning Journey
+Goal: no dead-ends, profile is easy to leave, persistent thumb-friendly bottom nav, clear "Continue learning" path.
 
-A playful, gamified Italian app for complete beginners that grows with you across four pillars: **vocabulary, speaking, grammar, and reading**. Progress is saved to your account so you can pick up wherever you left off.
+### 1. BottomNav (`src/components/italian/BottomNav.tsx`)
+Rebuild to match the requested 6 tabs and tighter mobile UX:
+- Tabs (in order): **Home, Vocab, Speak, Grammar, Read (Stories), Profile**.
+- Move **Luca (tutor)** off the bottom bar — promote on Home hero instead (already linked there). This keeps 6 tabs as requested.
+- Full-width fixed bar (`fixed bottom-0 inset-x-0`) with safe-area padding (`pb-[env(safe-area-inset-bottom)]`), not a floating pill — bigger tap targets (min 48px height), spreads across full width on mobile.
+- Active tab: filled pill + colored icon + label, with a small top accent bar for clarity. Inactive: muted icon + label.
+- Smooth `transition` and subtle scale on press.
+- Keep glassy backdrop, but remove the floating animation that makes it harder to tap.
 
----
+### 2. Profile page (`src/routes/profile.tsx`)
+Add a top utility bar so users can always escape:
+- **Back** button (uses `router.history.back()` with safe fallback to `/`).
+- **Home** button (Link to `/`).
+- Title in the middle, **Sign out** moved into the top bar as a clear icon-button as well as the existing bottom one.
+- Add a small breadcrumb: `Home › Profile`.
+- Keep tap targets ≥44px.
 
-## What you'll get
+### 3. Shared `PageHeader` component (new: `src/components/italian/PageHeader.tsx`)
+Reusable Back + Home + breadcrumb header. Add it to:
+- `profile.tsx`
+- `learn.tsx`, `learn.$deckId.tsx`
+- `grammar.tsx`, `grammar.$lessonId.tsx`
+- `read.tsx`, `read.$storyId.tsx`
+- `speak.tsx`
+- `tutor.tsx`
+This guarantees no trapped screens.
 
-### 1. Account & progress (Lovable Cloud)
-- Sign up / log in with **email + password** and **Google**
-- Your account remembers: streak, XP, level, learned words, lessons completed, reading progress
-- A simple **profile** page (name, avatar, level)
+### 4. Home dashboard (`src/routes/index.tsx`)
+- Add a **"Continue learning"** primary CTA card near the top (below hero) that resumes the user's last activity. MVP: read `last_route` from `localStorage` (set by a small effect in each section route). Falls back to `/learn` if none.
+- Reorder visual hierarchy: Hero → Continue Learning → Daily goal → Pillars → Word of the day → Profile mini-card moved lower (secondary).
+- Pillars grid updated to 5 tiles to mirror nav (Vocab, Speak, Grammar, Read, Luca).
 
-### 2. Home dashboard (gamified)
-- **Streak counter** (🔥 days in a row)
-- **XP bar + level** ("Principiante → Esploratore → Viaggiatore → Locale")
-- **Daily goal** ring (e.g. earn 30 XP today)
-- **Frase del giorno** (phrase of the day, with audio)
-- Quick-launch tiles for the four pillars
+### 5. Last-activity tracking (`src/lib/last-activity.ts`, new)
+Tiny helper:
+- `setLastActivity({ to, label })` → localStorage
+- `getLastActivity()` → `{ to, label } | null`
+Called from a `useEffect` in each section route.
 
-### 3. Daily Vocabulary 📚
-- Themed decks for beginners: Saluti, Al Bar, Numeri, Famiglia, Casa, Tempo, Cibo, Viaggio
-- **Flashcards** with flip + native audio (already built — we'll polish)
-- **Quiz mode**: multiple choice, type-the-word, listen-and-pick
-- Spaced-repetition lite: words you miss come back sooner
-- **+10 XP** per correct answer, badges at milestones (10, 50, 100 words)
+### 6. AppShell (`src/routes/__root.tsx`)
+- Adjust `pb-32` → `pb-24` and ensure content isn't hidden behind the new full-width bar. Add safe-area padding.
 
-### 4. Daily Speaking 🎙️
-- Listen to a phrase, then **record yourself** and replay side-by-side
-- Pronunciation tips (stressed syllable highlighted)
-- "Speak the answer" challenges (browser speech recognition where supported)
-- Daily 3-phrase speaking warm-up
-
-### 5. Grammar, step by step 📖
-- Bite-sized lessons in order, unlocked one at a time:
-  1. The alphabet & sounds
-  2. Articles (il, la, lo, i, le, gli)
-  3. Nouns & gender
-  4. Essere & Avere (to be / to have)
-  5. Present tense — regular -are verbs
-  6. Asking questions
-  7. Numbers, time, dates
-  8. Common prepositions
-- Each lesson = short explanation + examples + 5-question check → earns XP
-
-### 6. Step-by-step Reading 📜
-- Mini-stories at A0 → A1 level (3–6 sentences, growing longer)
-- Tap any word to see translation + hear it
-- "Comprehension" check at the end (2–3 questions)
-- Stories themed around Italy: una mattina a Roma, al mercato, in spiaggia…
-
-### 7. Coach corner (optional bonus)
-- A small "Buongiorno!" daily encouragement message based on your streak
-- Gentle nudge if you miss a day
-
----
-
-## Visual & feel
-- Keep the warm Italian palette (terracotta + cream) **and** add gamified touches: bright accent for XP/streak, soft confetti on level-up, springy framer-motion animations on cards and buttons.
-- Big, friendly typography (Fraunces display + Inter body, already set).
-- Mobile-first — works great on phone for daily practice.
-
----
-
-## Suggested build order (so you can use it fast)
-
-1. **Foundations**: enable Lovable Cloud, set up auth (email + Google), profile, XP/streak tracking, app shell with bottom nav (Home · Learn · Speak · Read · Profile).
-2. **Vocabulary v2**: keep current flashcards, add quiz mode + XP + saved progress.
-3. **Speaking module**: record-yourself + listen-back, daily warm-up.
-4. **Grammar lessons**: first 4 lessons with checks.
-5. **Reading module**: 5 starter stories with tap-to-translate.
-6. **Polish**: badges, level-up animation, daily reminder message.
-
----
-
-## Technical notes (for the curious)
-
-- **Backend**: Lovable Cloud (Postgres + auth). Tables: `profiles`, `progress` (xp, streak, level, last_active), `learned_words`, `lesson_completion`, `story_progress`.
-- **Audio**: browser `SpeechSynthesis` (it-IT) for TTS; `MediaRecorder` for user recordings (kept locally, not uploaded).
-- **Speech recognition**: Web Speech API where supported; graceful fallback otherwise.
-- **Framework**: TanStack Start routes — `/`, `/login`, `/learn`, `/learn/$deckId`, `/speak`, `/grammar`, `/grammar/$lessonId`, `/read`, `/read/$storyId`, `/profile`.
-- All lesson and story content authored in TypeScript files (no CMS) so it's easy to expand.
-
----
-
-## Quick check before building
-
-- **Login methods**: I'll set up **email + password** and **Google sign-in**. Tell me if you'd rather skip Google.
-- **Profile data**: just name + avatar (so we have a "Ciao, [your name]!" greeting). OK?
-- **Scope of v1**: I'll ship pillars 1–4 strong (foundation, vocab, speaking, grammar) and seed the reading module with 5 stories. We can grow content together after.
-
-Ready to build when you are — just hit **Implement plan**. 🇮🇹
+### Out of scope (not changing now)
+- Onboarding flow content (already exists at `/onboarding`).
+- Auth screens.
+- Any backend/schema changes — `last_route` is client-only for now.
