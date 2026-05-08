@@ -138,12 +138,12 @@ function Dashboard() {
             {continueLabel}
           </h2>
         </div>
-        <Link
-          to={continueTo}
+        <a
+          href={continueTo}
           className="inline-flex shrink-0 items-center gap-2 rounded-full bg-primary px-5 py-3 text-sm font-bold text-primary-foreground transition hover:scale-105"
         >
           {last ? "Continue" : "Start"} <ArrowRight className="h-4 w-4" />
-        </Link>
+        </a>
       </section>
 
       {/* Profile card */}
