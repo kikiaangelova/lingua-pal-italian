@@ -37,17 +37,12 @@ function GrammarPage() {
       <ol className="mt-8 space-y-3">
         {lessons.map((l, idx) => {
           const isDone = done.has(l.id);
-          const prevDone = idx === 0 || done.has(lessons[idx - 1].id);
-          const locked = !prevDone;
-          const Tag: any = locked ? "div" : Link;
           return (
-            <Tag
+            <Link
               key={l.id}
-              {...(!locked ? { to: "/grammar/$lessonId", params: { lessonId: l.id } } : {})}
-              className={
-                "group flex items-center gap-4 rounded-2xl border border-border/60 bg-card p-4 transition " +
-                (locked ? "opacity-60" : "hover:-translate-y-0.5 hover:border-primary/40")
-              }
+              to="/grammar/$lessonId"
+              params={{ lessonId: l.id }}
+              className="group flex items-center gap-4 rounded-2xl border border-border/60 bg-card p-4 transition hover:-translate-y-0.5 hover:border-primary/40"
               style={{ boxShadow: "var(--shadow-soft)" }}
             >
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-accent text-2xl">
@@ -59,14 +54,12 @@ function GrammarPage() {
                 </div>
                 <div className="text-sm text-muted-foreground">{l.blurb}</div>
               </div>
-              {locked ? (
-                <Lock className="h-5 w-5 text-muted-foreground" />
-              ) : isDone ? (
+              {isDone ? (
                 <CheckCircle2 className="h-6 w-6 text-secondary" />
               ) : (
                 <ArrowRight className="h-5 w-5 text-muted-foreground transition group-hover:translate-x-1 group-hover:text-primary" />
               )}
-            </Tag>
+            </Link>
           );
         })}
       </ol>
