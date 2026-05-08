@@ -20,6 +20,7 @@ import { Route as LearnRouteImport } from './routes/learn'
 import { Route as GrammarRouteImport } from './routes/grammar'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as LearnIndexRouteImport } from './routes/learn.index'
+import { Route as GrammarIndexRouteImport } from './routes/grammar.index'
 import { Route as ReadStoryIdRouteImport } from './routes/read.$storyId'
 import { Route as LearnDeckIdRouteImport } from './routes/learn.$deckId'
 import { Route as GrammarLessonIdRouteImport } from './routes/grammar.$lessonId'
@@ -79,6 +80,11 @@ const LearnIndexRoute = LearnIndexRouteImport.update({
   path: '/',
   getParentRoute: () => LearnRoute,
 } as any)
+const GrammarIndexRoute = GrammarIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => GrammarRoute,
+} as any)
 const ReadStoryIdRoute = ReadStoryIdRouteImport.update({
   id: '/$storyId',
   path: '/$storyId',
@@ -109,11 +115,11 @@ export interface FileRoutesByFullPath {
   '/grammar/$lessonId': typeof GrammarLessonIdRoute
   '/learn/$deckId': typeof LearnDeckIdRoute
   '/read/$storyId': typeof ReadStoryIdRoute
+  '/grammar/': typeof GrammarIndexRoute
   '/learn/': typeof LearnIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/grammar': typeof GrammarRouteWithChildren
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
@@ -124,6 +130,7 @@ export interface FileRoutesByTo {
   '/grammar/$lessonId': typeof GrammarLessonIdRoute
   '/learn/$deckId': typeof LearnDeckIdRoute
   '/read/$storyId': typeof ReadStoryIdRoute
+  '/grammar': typeof GrammarIndexRoute
   '/learn': typeof LearnIndexRoute
 }
 export interface FileRoutesById {
@@ -141,6 +148,7 @@ export interface FileRoutesById {
   '/grammar/$lessonId': typeof GrammarLessonIdRoute
   '/learn/$deckId': typeof LearnDeckIdRoute
   '/read/$storyId': typeof ReadStoryIdRoute
+  '/grammar/': typeof GrammarIndexRoute
   '/learn/': typeof LearnIndexRoute
 }
 export interface FileRouteTypes {
@@ -159,11 +167,11 @@ export interface FileRouteTypes {
     | '/grammar/$lessonId'
     | '/learn/$deckId'
     | '/read/$storyId'
+    | '/grammar/'
     | '/learn/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/grammar'
     | '/login'
     | '/onboarding'
     | '/profile'
@@ -174,6 +182,7 @@ export interface FileRouteTypes {
     | '/grammar/$lessonId'
     | '/learn/$deckId'
     | '/read/$storyId'
+    | '/grammar'
     | '/learn'
   id:
     | '__root__'
@@ -190,6 +199,7 @@ export interface FileRouteTypes {
     | '/grammar/$lessonId'
     | '/learn/$deckId'
     | '/read/$storyId'
+    | '/grammar/'
     | '/learn/'
   fileRoutesById: FileRoutesById
 }
@@ -285,6 +295,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LearnIndexRouteImport
       parentRoute: typeof LearnRoute
     }
+    '/grammar/': {
+      id: '/grammar/'
+      path: '/'
+      fullPath: '/grammar/'
+      preLoaderRoute: typeof GrammarIndexRouteImport
+      parentRoute: typeof GrammarRoute
+    }
     '/read/$storyId': {
       id: '/read/$storyId'
       path: '/$storyId'
@@ -311,10 +328,12 @@ declare module '@tanstack/react-router' {
 
 interface GrammarRouteChildren {
   GrammarLessonIdRoute: typeof GrammarLessonIdRoute
+  GrammarIndexRoute: typeof GrammarIndexRoute
 }
 
 const GrammarRouteChildren: GrammarRouteChildren = {
   GrammarLessonIdRoute: GrammarLessonIdRoute,
+  GrammarIndexRoute: GrammarIndexRoute,
 }
 
 const GrammarRouteWithChildren =
@@ -357,3 +376,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
