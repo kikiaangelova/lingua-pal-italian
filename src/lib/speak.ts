@@ -33,16 +33,23 @@ export function speakIt(text: string) {
   // Voices load async on most browsers (especially Chrome). If the list is
   // empty, wait for voiceschanged once and retry.
   if (!window.speechSynthesis.getVoices().length) {
+    let done = false;
     const handler = () => {
+      if (done) return;
+      done = true;
       window.speechSynthesis.removeEventListener("voiceschanged", handler);
       cachedVoice = null;
       speakNow(text);
     };
     window.speechSynthesis.addEventListener("voiceschanged", handler);
-    // Trigger voice loading
     window.speechSynthesis.getVoices();
-    // Safety: if voiceschanged never fires within 400ms, just speak with default.
-    setTimeout(() => speakNow(text), 400);
+    // Safety fallback if voiceschanged never fires
+    setTimeout(() => {
+      if (done) return;
+      done = true;
+      window.speechSynthesis.removeEventListener("voiceschanged", handler);
+      speakNow(text);
+    }, 500);
     return;
   }
   speakNow(text);
