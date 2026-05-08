@@ -71,8 +71,8 @@ function OnboardingPage() {
       });
   }, [user, navigate]);
 
-  const next = () => setStep((s) => Math.min(5, (s + 1) as Step));
-  const back = () => setStep((s) => Math.max(0, (s - 1) as Step));
+  const next = () => setStep((s) => Math.min(5, s + 1) as Step);
+  const back = () => setStep((s) => Math.max(0, s - 1) as Step);
 
   const finish = async () => {
     if (!user) return;
