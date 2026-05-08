@@ -27,10 +27,14 @@ export const Route = createFileRoute("/")({
 function Index() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
+
   useEffect(() => {
     if (!loading && !user) navigate({ to: "/try" });
   }, [loading, user, navigate]);
-  if (loading || !user) return <LoadingSplash />;
+
+  if (loading) return <LoadingSplash />;
+  if (!user) return null;
+
   return <Dashboard />;
 }
 
