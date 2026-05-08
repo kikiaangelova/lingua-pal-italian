@@ -8,6 +8,7 @@ import { lessons } from "@/components/italian/lessons";
 import { speakIt } from "@/lib/speak";
 import { supabase } from "@/integrations/supabase/client";
 import bgVideo from "@/assets/italy-bg.mp4.asset.json";
+import italyHero from "@/assets/italy-hero.mp4.asset.json";
 import avatarDemo from "@/assets/avatar-demo.jpg";
 import { getLastActivity } from "@/lib/last-activity";
 
@@ -43,39 +44,78 @@ function LoadingSplash() {
 
 function GuestHome() {
   return (
-    <main className="mx-auto max-w-3xl px-4 pb-16 pt-6 sm:px-5 sm:pt-8">
-      <section
-        className="rounded-3xl border border-border/60 bg-card p-6 sm:p-8"
-        style={{ boxShadow: "var(--shadow-warm)" }}
-      >
-        <span className="inline-flex items-center gap-2 rounded-full border border-border bg-accent/40 px-3 py-1 text-xs uppercase tracking-[0.25em] text-muted-foreground">
-          <Sparkles className="h-3 w-3 text-primary" /> Learn Italian your way
-        </span>
-        <h1 className="mt-4 text-4xl font-extrabold leading-[0.95] text-foreground sm:text-6xl">
-          Start learning
-          <br />
-          <span className="text-primary">before you sign in.</span>
-        </h1>
-        <p className="mt-4 max-w-2xl text-sm text-muted-foreground sm:text-base">
-          Explore vocabulary, grammar, stories, and speaking right away. The daily goal is a target, not a cap — you can learn far more than five words in a day.
-        </p>
+    <main className="mx-auto max-w-3xl px-4 pb-16 pt-4 sm:px-5 sm:pt-6">
+      {/* Cinematic hero — same energy as desktop, tuned for mobile */}
+      <section className="relative overflow-hidden rounded-3xl border border-white/20 shadow-2xl sm:rounded-[2rem]">
+        <video
+          src={italyHero.url}
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-br from-black/75 via-black/40 to-primary/40" />
+        <div className="relative z-10 px-5 py-10 sm:px-10 sm:py-16">
+          <span className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.3em] text-white backdrop-blur">
+            <Sparkles className="h-3 w-3" /> No sign-up. No fluff.
+          </span>
+          <h1 className="mt-4 text-5xl font-extrabold leading-[0.9] text-white sm:text-7xl">
+            Italiano,
+            <br />
+            <span
+              className="bg-clip-text text-transparent"
+              style={{ backgroundImage: "var(--gradient-zest)" }}
+            >
+              senza filtri.
+            </span>
+          </h1>
+          <p className="mt-3 max-w-md text-sm text-white/85 sm:text-base">
+            Tap. Hear native Italian. Roast yourself in a quiz. Meet Luca — the AI mentor who actually remembers you. Free, no email wall.
+          </p>
+          <div className="mt-5 flex flex-wrap gap-2.5">
+            <Link
+              to="/learn/$deckId"
+              params={{ deckId: "greetings" }}
+              className="inline-flex min-h-[48px] items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-bold text-foreground transition active:scale-95 sm:hover:scale-105"
+              style={{ boxShadow: "var(--shadow-warm)" }}
+            >
+              Start a quiz <ArrowRight className="h-4 w-4" />
+            </Link>
+            <Link
+              to="/try"
+              className="inline-flex min-h-[48px] items-center gap-2 rounded-full border border-white/40 bg-white/10 px-5 py-3 text-sm font-bold text-white backdrop-blur"
+            >
+              <Volume2 className="h-4 w-4" /> Hear it first
+            </Link>
+          </div>
+        </div>
+      </section>
 
-        <div className="mt-6 flex flex-wrap gap-3">
-          <Link
-            to="/learn/$deckId"
-            params={{ deckId: "greetings" }}
-            className="inline-flex min-h-[48px] items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-bold text-primary-foreground"
-            style={{ boxShadow: "var(--shadow-warm)" }}
-          >
-            Start first vocab quiz <ArrowRight className="h-4 w-4" />
+      {/* Quick-pick lesson deep-links */}
+      <section className="mt-6">
+        <div className="mb-3 flex items-end justify-between">
+          <h2 className="font-display text-2xl font-semibold">Pick your vibe</h2>
+          <Link to="/grammar" className="text-xs font-bold uppercase tracking-[0.2em] text-primary">
+            See all
           </Link>
-          <Link
-            to="/grammar/$lessonId"
-            params={{ lessonId: lessons[0]!.id }}
-            className="inline-flex min-h-[48px] items-center gap-2 rounded-full border border-border bg-background px-6 py-3 text-sm font-bold text-foreground"
-          >
-            Start first grammar lesson
-          </Link>
+        </div>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+          {lessons.slice(0, 6).map((l) => (
+            <Link
+              key={l.id}
+              to="/grammar/$lessonId"
+              params={{ lessonId: l.id }}
+              className="group rounded-2xl border border-border/60 bg-card p-4 transition active:scale-[0.98] hover:-translate-y-0.5 hover:border-primary/40"
+              style={{ boxShadow: "var(--shadow-soft)" }}
+            >
+              <div className="text-2xl">{l.emoji}</div>
+              <div className="mt-2 font-display text-base font-semibold leading-tight text-foreground">
+                {l.title}
+              </div>
+              <div className="mt-0.5 line-clamp-2 text-xs text-muted-foreground">{l.blurb}</div>
+            </Link>
+          ))}
         </div>
       </section>
 
@@ -84,25 +124,25 @@ function GuestHome() {
         <Tile to="/read" icon={<ScrollText className="h-6 w-6" />} title="Read" subtitle="Open a mini-story and do the check" />
       </section>
 
+      {/* Sign-up nudge */}
       <section
-        className="mt-6 rounded-3xl border border-border/60 bg-card p-5 sm:p-6"
-        style={{ boxShadow: "var(--shadow-soft)" }}
+        className="mt-6 overflow-hidden rounded-3xl border border-primary/30 p-5 sm:p-6"
+        style={{ background: "var(--gradient-soft)", boxShadow: "var(--shadow-warm)" }}
       >
-        <h2 className="font-display text-2xl font-semibold text-foreground">How progress works</h2>
-        <div className="mt-4 grid gap-3 sm:grid-cols-3">
-          <div>
-            <p className="text-sm font-semibold text-foreground">Vocabulary</p>
-            <p className="mt-1 text-sm text-muted-foreground">Correct quiz answers mark words as learned.</p>
-          </div>
-          <div>
-            <p className="text-sm font-semibold text-foreground">Grammar & reading</p>
-            <p className="mt-1 text-sm text-muted-foreground">Finished lesson checks move you forward on the journey map.</p>
-          </div>
-          <div>
-            <p className="text-sm font-semibold text-foreground">Luca</p>
-            <p className="mt-1 text-sm text-muted-foreground">When you sign in, Luca can remember mistakes and adapt what comes next.</p>
-          </div>
-        </div>
+        <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-primary">Level up</p>
+        <h2 className="mt-1 font-display text-2xl font-semibold text-foreground sm:text-3xl">
+          Keep your streak. Make Luca yours.
+        </h2>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Sign up free — your XP, journey map, and Luca's memory of your mistakes follow you everywhere.
+        </p>
+        <Link
+          to="/login"
+          className="mt-4 inline-flex min-h-[48px] items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-bold text-primary-foreground transition active:scale-95 sm:hover:scale-105"
+          style={{ boxShadow: "var(--shadow-warm)" }}
+        >
+          Create free account <ArrowRight className="h-4 w-4" />
+        </Link>
       </section>
     </main>
   );
