@@ -134,7 +134,7 @@ function AppShell() {
   const loc = useLocation();
   const onLogin = loc.pathname === "/login";
   return (
-    <div className="min-h-screen pb-24">
+    <div className="min-h-screen pb-32">
       <Outlet />
       {!loading && user && !onLogin ? <BottomNav /> : null}
     </div>
