@@ -4,6 +4,8 @@ import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { stories } from "@/components/italian/stories";
 import { fetchCompletedStories } from "@/lib/progress";
+import { PageHeader } from "@/components/italian/PageHeader";
+import { setLastActivity } from "@/lib/last-activity";
 
 export const Route = createFileRoute("/read")({
   component: ReadPage,
@@ -21,12 +23,14 @@ function ReadPage() {
   useEffect(() => {
     if (!user) return;
     fetchCompletedStories(user.id).then((d) => setDone(new Set(d.map((x) => x.story_id))));
+    setLastActivity({ to: "/read", label: "Mini stories" });
   }, [user]);
 
   if (!user) return null;
 
   return (
     <main className="mx-auto max-w-2xl px-5 py-8 sm:py-12">
+      <PageHeader title="Stories" crumbs={[{ label: "Stories" }]} />
       <h1 className="text-4xl font-semibold text-foreground sm:text-5xl">
         Mini <em className="font-display italic text-primary">stories</em>
       </h1>

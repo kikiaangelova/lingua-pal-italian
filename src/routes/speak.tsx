@@ -7,6 +7,8 @@ import { VoicePicker } from "@/components/italian/VoicePicker";
 import { categories } from "@/components/italian/data";
 import { awardXp } from "@/lib/progress";
 import { toast } from "sonner";
+import { PageHeader } from "@/components/italian/PageHeader";
+import { setLastActivity } from "@/lib/last-activity";
 
 export const Route = createFileRoute("/speak")({
   component: SpeakPage,
@@ -35,6 +37,10 @@ function SpeakPage() {
   useEffect(() => {
     if (!loading && !user) navigate({ to: "/login" });
   }, [loading, user, navigate]);
+
+  useEffect(() => {
+    if (user) setLastActivity({ to: "/speak", label: "Speaking practice" });
+  }, [user]);
 
   const allPhrases = categories.flatMap((c) => c.phrases);
   const [phrases] = useState(() => dailyPick(allPhrases, 5));
@@ -89,6 +95,7 @@ function SpeakPage() {
 
   return (
     <main className="mx-auto max-w-2xl px-5 py-8 sm:py-12">
+      <PageHeader title="Speaking" crumbs={[{ label: "Speaking" }]} />
       <h1 className="text-4xl font-semibold text-foreground sm:text-5xl">
         Daily <em className="font-display italic text-primary">speaking</em>
       </h1>

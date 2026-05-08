@@ -5,6 +5,7 @@ import { useAuth } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
 import { fetchProgress, levelFor, fetchLearnedWords, fetchCompletedLessons, fetchCompletedStories } from "@/lib/progress";
 import { toast } from "sonner";
+import { PageHeader } from "@/components/italian/PageHeader";
 
 export const Route = createFileRoute("/profile")({
   component: ProfilePage,
@@ -65,6 +66,7 @@ function ProfilePage() {
 
   return (
     <main className="mx-auto max-w-2xl px-5 py-8 sm:py-12">
+      <PageHeader title="Profile" crumbs={[{ label: "Profile" }]} />
       <h1 className="text-4xl font-semibold text-foreground sm:text-5xl">
         Il tuo <em className="font-display italic text-primary">profilo</em>
       </h1>

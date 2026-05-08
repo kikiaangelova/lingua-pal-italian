@@ -2,6 +2,8 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { Send, Sparkles } from "lucide-react";
 import { useAuth } from "@/lib/auth";
+import { PageHeader } from "@/components/italian/PageHeader";
+import { setLastActivity } from "@/lib/last-activity";
 
 export const Route = createFileRoute("/tutor")({
   head: () => ({
@@ -21,6 +23,10 @@ function TutorPage() {
   useEffect(() => {
     if (!loading && !user) navigate({ to: "/login" });
   }, [loading, user, navigate]);
+
+  useEffect(() => {
+    if (user) setLastActivity({ to: "/tutor", label: "Chat with Luca" });
+  }, [user]);
 
   const [messages, setMessages] = useState<Msg[]>([
     {
@@ -108,6 +114,7 @@ function TutorPage() {
 
   return (
     <main className="mx-auto flex h-[100dvh] max-w-2xl flex-col px-4 pb-28 pt-6">
+      <PageHeader title="Luca" crumbs={[{ label: "Luca" }]} />
       <header className="mb-4">
         <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card/70 px-3 py-1 text-xs uppercase tracking-[0.25em] text-muted-foreground backdrop-blur">
           <Sparkles className="h-3 w-3 text-primary" /> AI Tutor
