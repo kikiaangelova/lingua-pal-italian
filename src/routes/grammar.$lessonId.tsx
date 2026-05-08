@@ -1,7 +1,7 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState } from "react";
 import ReactMarkdown from "react-markdown";
-import { ArrowLeft, Check, X, Sparkles, Volume2 } from "lucide-react";
+import { ArrowLeft, Check, X, Sparkles, Volume2, ArrowRight } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { lessonById } from "@/components/italian/lessons";
 import { awardXp, completeLesson } from "@/lib/progress";
@@ -14,18 +14,21 @@ export const Route = createFileRoute("/grammar/$lessonId")({
 
 function LessonPage() {
   const { user, loading } = useAuth();
-  const navigate = useNavigate();
   const { lessonId } = Route.useParams();
   const lesson = lessonById(lessonId);
-
-  useEffect(() => {
-    if (!loading && !user) navigate({ to: "/login" });
-  }, [loading, user, navigate]);
 
   const [phase, setPhase] = useState<"learn" | "quiz" | "done">("learn");
   const [qi, setQi] = useState(0);
   const [picked, setPicked] = useState<number | null>(null);
   const [score, setScore] = useState(0);
+
+  if (loading) {
+    return (
+      <main className="mx-auto flex min-h-screen max-w-2xl items-center justify-center px-5 py-12">
+        <p className="font-display text-3xl italic text-muted-foreground">Un momento…</p>
+      </main>
+    );
+  }
 
   if (!lesson) {
     return (
@@ -35,11 +38,11 @@ function LessonPage() {
       </main>
     );
   }
-  if (!user) return null;
-
   const finishLesson = async (finalScore: number) => {
-    await completeLesson(user.id, lesson.id, finalScore);
-    await awardXp(user.id, finalScore * 5);
+    if (user) {
+      await completeLesson(user.id, lesson.id, finalScore);
+      await awardXp(user.id, finalScore * 5);
+    }
     setPhase("done");
   };
 
@@ -53,14 +56,18 @@ function LessonPage() {
           <Sparkles className="mx-auto h-10 w-10 text-primary" />
           <h3 className="mt-3 font-display text-3xl font-semibold">Bravo!</h3>
           <p className="mt-1 text-muted-foreground">
-            {score} / {lesson.questions.length} correct · +{score * 5} XP
+            {score} / {lesson.questions.length} correct
+          </p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {user ? `Saved to your journey · +${score * 5} XP` : "Nice work. Sign in to save this lesson and keep Luca updated on what you need next."}
           </p>
           <Link
-            to="/grammar"
-            className="mt-6 inline-block rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground hover:opacity-90"
+            to={user ? "/grammar" : "/login"}
+            className="mt-6 inline-flex min-h-[44px] items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground hover:opacity-90"
             style={{ boxShadow: "var(--shadow-warm)" }}
           >
-            Back to lessons
+            {user ? "Back to lessons" : "Sign in to save progress"}
+            <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
       </main>
@@ -88,6 +95,11 @@ function LessonPage() {
 
         <section className="mt-6">
           <h3 className="font-display text-xl font-semibold">Examples</h3>
+          {!user && (
+            <p className="mt-2 text-sm text-muted-foreground">
+              You can try this lesson without an account. When you sign in, completed quizzes update your journey map and Luca remembers what needs work.
+            </p>
+          )}
           <ul className="mt-3 grid gap-2">
             {lesson.examples.map((ex) => (
               <li
