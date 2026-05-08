@@ -55,9 +55,9 @@ export function PageHeader({
             <span key={i} className="flex items-center gap-1">
               <span aria-hidden>›</span>
               {c.to ? (
-                <Link to={c.to} className="hover:text-foreground">
+                <a href={c.to} className="hover:text-foreground">
                   {c.label}
-                </Link>
+                </a>
               ) : (
                 <span className="text-foreground">{c.label}</span>
               )}
