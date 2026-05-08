@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
@@ -13,12 +13,7 @@ export const Route = createFileRoute("/grammar")({
 
 function GrammarPage() {
   const { user, loading } = useAuth();
-  const navigate = useNavigate();
   const [done, setDone] = useState<Set<string>>(new Set());
-
-  useEffect(() => {
-    if (!loading && !user) navigate({ to: "/login" });
-  }, [loading, user, navigate]);
 
   useEffect(() => {
     if (!user) return;
@@ -27,7 +22,6 @@ function GrammarPage() {
   }, [user]);
 
   if (loading) return <LoadingState />;
-  if (!user) return <RedirectingToLogin />;
 
   return (
     <main className="mx-auto max-w-2xl px-5 py-8 sm:py-12">
@@ -58,6 +52,11 @@ function GrammarPage() {
         >
           Start first lesson <ArrowRight className="h-4 w-4" />
         </Link>
+        {!user && (
+          <p className="mt-3 text-xs text-muted-foreground">
+            You can try lessons as a guest. Sign in only when you want your progress saved.
+          </p>
+        )}
       </section>
 
       <ol className="mt-8 space-y-3">
@@ -97,17 +96,6 @@ function LoadingState() {
   return (
     <main className="mx-auto flex min-h-screen max-w-2xl items-center justify-center px-5 py-12">
       <p className="font-display text-3xl italic text-muted-foreground">Un momento…</p>
-    </main>
-  );
-}
-
-function RedirectingToLogin() {
-  return (
-    <main className="mx-auto flex min-h-screen max-w-2xl items-center justify-center px-5 py-12">
-      <div className="text-center">
-        <h1 className="font-display text-3xl font-semibold text-foreground">Sign in to save your lessons</h1>
-        <p className="mt-2 text-sm text-muted-foreground">You’ll be taken to login so your quizzes, mistakes, and journey map can be saved.</p>
-      </div>
     </main>
   );
 }
