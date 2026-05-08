@@ -130,7 +130,6 @@ export const categories: Category[] = [
 export function deckById(id: string) {
   return categories.find((c) => c.id === id);
 }
-];
 
 export const wordOfDay: Phrase = {
   it: "Dolce far niente",
