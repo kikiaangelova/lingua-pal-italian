@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ArrowRight, CheckCircle2, Lock } from "lucide-react";
+import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { lessons } from "@/components/italian/lessons";
 import { fetchCompletedLessons } from "@/lib/progress";
