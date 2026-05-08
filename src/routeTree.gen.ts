@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TutorRouteImport } from './routes/tutor'
+import { Route as TryRouteImport } from './routes/try'
 import { Route as SpeakRouteImport } from './routes/speak'
 import { Route as ReadRouteImport } from './routes/read'
 import { Route as ProfileRouteImport } from './routes/profile'
@@ -25,6 +26,11 @@ import { Route as GrammarLessonIdRouteImport } from './routes/grammar.$lessonId'
 const TutorRoute = TutorRouteImport.update({
   id: '/tutor',
   path: '/tutor',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TryRoute = TryRouteImport.update({
+  id: '/try',
+  path: '/try',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SpeakRoute = SpeakRouteImport.update({
@@ -92,6 +98,7 @@ export interface FileRoutesByFullPath {
   '/profile': typeof ProfileRoute
   '/read': typeof ReadRouteWithChildren
   '/speak': typeof SpeakRoute
+  '/try': typeof TryRoute
   '/tutor': typeof TutorRoute
   '/grammar/$lessonId': typeof GrammarLessonIdRoute
   '/learn/$deckId': typeof LearnDeckIdRoute
@@ -106,6 +113,7 @@ export interface FileRoutesByTo {
   '/profile': typeof ProfileRoute
   '/read': typeof ReadRouteWithChildren
   '/speak': typeof SpeakRoute
+  '/try': typeof TryRoute
   '/tutor': typeof TutorRoute
   '/grammar/$lessonId': typeof GrammarLessonIdRoute
   '/learn/$deckId': typeof LearnDeckIdRoute
@@ -121,6 +129,7 @@ export interface FileRoutesById {
   '/profile': typeof ProfileRoute
   '/read': typeof ReadRouteWithChildren
   '/speak': typeof SpeakRoute
+  '/try': typeof TryRoute
   '/tutor': typeof TutorRoute
   '/grammar/$lessonId': typeof GrammarLessonIdRoute
   '/learn/$deckId': typeof LearnDeckIdRoute
@@ -137,6 +146,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/read'
     | '/speak'
+    | '/try'
     | '/tutor'
     | '/grammar/$lessonId'
     | '/learn/$deckId'
@@ -151,6 +161,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/read'
     | '/speak'
+    | '/try'
     | '/tutor'
     | '/grammar/$lessonId'
     | '/learn/$deckId'
@@ -165,6 +176,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/read'
     | '/speak'
+    | '/try'
     | '/tutor'
     | '/grammar/$lessonId'
     | '/learn/$deckId'
@@ -180,6 +192,7 @@ export interface RootRouteChildren {
   ProfileRoute: typeof ProfileRoute
   ReadRoute: typeof ReadRouteWithChildren
   SpeakRoute: typeof SpeakRoute
+  TryRoute: typeof TryRoute
   TutorRoute: typeof TutorRoute
 }
 
@@ -190,6 +203,13 @@ declare module '@tanstack/react-router' {
       path: '/tutor'
       fullPath: '/tutor'
       preLoaderRoute: typeof TutorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/try': {
+      id: '/try'
+      path: '/try'
+      fullPath: '/try'
+      preLoaderRoute: typeof TryRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/speak': {
@@ -312,8 +332,19 @@ const rootRouteChildren: RootRouteChildren = {
   ProfileRoute: ProfileRoute,
   ReadRoute: ReadRouteWithChildren,
   SpeakRoute: SpeakRoute,
+  TryRoute: TryRoute,
   TutorRoute: TutorRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
