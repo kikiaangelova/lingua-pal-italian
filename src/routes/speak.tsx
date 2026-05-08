@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { Mic, Square, Play, Volume2, Sparkles } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { speakIt } from "@/lib/speak";
+import { VoicePicker } from "@/components/italian/VoicePicker";
 import { categories } from "@/components/italian/data";
 import { awardXp } from "@/lib/progress";
 import { toast } from "sonner";
@@ -96,6 +97,10 @@ function SpeakPage() {
       </p>
 
       <div className="mt-4 text-sm text-muted-foreground">Phrase {i + 1} / {phrases.length}</div>
+
+      <div className="mt-3">
+        <VoicePicker sample={phrase.it} />
+      </div>
 
       <section
         className="mt-3 rounded-3xl border border-border/60 bg-card p-8 text-center"
