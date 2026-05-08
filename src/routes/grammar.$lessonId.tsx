@@ -1,0 +1,185 @@
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import ReactMarkdown from "react-markdown";
+import { ArrowLeft, Check, X, Sparkles, Volume2 } from "lucide-react";
+import { useAuth } from "@/lib/auth";
+import { lessonById } from "@/components/italian/lessons";
+import { awardXp, completeLesson } from "@/lib/progress";
+import { speakIt } from "@/lib/speak";
+import { toast } from "sonner";
+
+export const Route = createFileRoute("/grammar/$lessonId")({
+  component: LessonPage,
+});
+
+function LessonPage() {
+  const { user, loading } = useAuth();
+  const navigate = useNavigate();
+  const { lessonId } = Route.useParams();
+  const lesson = lessonById(lessonId);
+
+  useEffect(() => {
+    if (!loading && !user) navigate({ to: "/login" });
+  }, [loading, user, navigate]);
+
+  const [phase, setPhase] = useState<"learn" | "quiz" | "done">("learn");
+  const [qi, setQi] = useState(0);
+  const [picked, setPicked] = useState<number | null>(null);
+  const [score, setScore] = useState(0);
+
+  if (!lesson) {
+    return (
+      <main className="mx-auto max-w-2xl px-5 py-12">
+        <p>Lesson not found.</p>
+        <Link to="/grammar" className="text-primary underline">Back</Link>
+      </main>
+    );
+  }
+  if (!user) return null;
+
+  const finishLesson = async (finalScore: number) => {
+    await completeLesson(user.id, lesson.id, finalScore);
+    await awardXp(user.id, finalScore * 5);
+    setPhase("done");
+  };
+
+  if (phase === "done") {
+    return (
+      <main className="mx-auto max-w-2xl px-5 py-12">
+        <div
+          className="rounded-3xl border border-border/60 bg-card p-8 text-center"
+          style={{ boxShadow: "var(--shadow-warm)" }}
+        >
+          <Sparkles className="mx-auto h-10 w-10 text-primary" />
+          <h3 className="mt-3 font-display text-3xl font-semibold">Bravo!</h3>
+          <p className="mt-1 text-muted-foreground">
+            {score} / {lesson.questions.length} correct · +{score * 5} XP
+          </p>
+          <Link
+            to="/grammar"
+            className="mt-6 inline-block rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground hover:opacity-90"
+            style={{ boxShadow: "var(--shadow-warm)" }}
+          >
+            Back to lessons
+          </Link>
+        </div>
+      </main>
+    );
+  }
+
+  if (phase === "learn") {
+    return (
+      <main className="mx-auto max-w-2xl px-5 py-8 sm:py-12">
+        <Link to="/grammar" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
+          <ArrowLeft className="h-4 w-4" /> Lessons
+        </Link>
+        <header className="mt-3">
+          <div className="text-3xl">{lesson.emoji}</div>
+          <h1 className="mt-1 text-4xl font-semibold text-foreground sm:text-5xl">{lesson.title}</h1>
+          <p className="text-muted-foreground">{lesson.blurb}</p>
+        </header>
+
+        <article
+          className="prose prose-sm mt-6 max-w-none rounded-3xl border border-border/60 bg-card p-6 text-foreground"
+          style={{ boxShadow: "var(--shadow-soft)" }}
+        >
+          <ReactMarkdown>{lesson.intro}</ReactMarkdown>
+        </article>
+
+        <section className="mt-6">
+          <h3 className="font-display text-xl font-semibold">Examples</h3>
+          <ul className="mt-3 grid gap-2">
+            {lesson.examples.map((ex) => (
+              <li
+                key={ex.it}
+                className="flex items-center justify-between gap-3 rounded-2xl border border-border/60 bg-card p-4"
+                style={{ boxShadow: "var(--shadow-soft)" }}
+              >
+                <div>
+                  <p className="font-display text-lg font-semibold text-foreground">{ex.it}</p>
+                  <p className="text-sm text-muted-foreground">{ex.en}</p>
+                </div>
+                <button
+                  onClick={() => speakIt(ex.it)}
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-background hover:bg-muted"
+                >
+                  <Volume2 className="h-4 w-4" />
+                </button>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <button
+          onClick={() => setPhase("quiz")}
+          className="mt-8 w-full rounded-full bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground hover:opacity-90"
+          style={{ boxShadow: "var(--shadow-warm)" }}
+        >
+          I'm ready — start the check
+        </button>
+      </main>
+    );
+  }
+
+  // quiz
+  const q = lesson.questions[qi];
+  const onPick = (idx: number) => {
+    if (picked !== null) return;
+    setPicked(idx);
+    const ok = idx === q.answer;
+    if (ok) {
+      setScore((s) => s + 1);
+      toast.success("Correct!", { duration: 800 });
+    }
+    setTimeout(() => {
+      if (qi + 1 >= lesson.questions.length) {
+        finishLesson(score + (ok ? 1 : 0));
+      } else {
+        setQi(qi + 1);
+        setPicked(null);
+      }
+    }, 800);
+  };
+
+  return (
+    <main className="mx-auto max-w-2xl px-5 py-8 sm:py-12">
+      <div className="flex items-center justify-between text-sm text-muted-foreground">
+        <span>Check · {qi + 1} / {lesson.questions.length}</span>
+        <span>Score: {score}</span>
+      </div>
+      <div
+        className="mt-3 rounded-3xl border border-border/60 bg-card p-8 text-center"
+        style={{ boxShadow: "var(--shadow-soft)" }}
+      >
+        <h2 className="font-display text-2xl font-semibold text-foreground sm:text-3xl">{q.q}</h2>
+      </div>
+      <div className="mt-4 grid gap-2">
+        {q.options.map((opt, idx) => {
+          const isCorrect = idx === q.answer;
+          const isPicked = idx === picked;
+          let cls = "border-border bg-card hover:border-primary/40";
+          if (picked !== null) {
+            if (isCorrect) cls = "border-secondary bg-secondary/10";
+            else if (isPicked) cls = "border-destructive bg-destructive/10";
+            else cls = "border-border bg-card opacity-60";
+          }
+          return (
+            <button
+              key={idx}
+              onClick={() => onPick(idx)}
+              disabled={picked !== null}
+              className={
+                "flex items-center justify-between rounded-2xl border px-5 py-4 text-left text-base text-foreground transition " +
+                cls
+              }
+            >
+              <span>{opt}</span>
+              {picked !== null && isCorrect && <Check className="h-5 w-5 text-secondary" />}
+              {picked !== null && isPicked && !isCorrect && <X className="h-5 w-5 text-destructive" />}
+            </button>
+          );
+        })}
+      </div>
+    </main>
+  );
+}
