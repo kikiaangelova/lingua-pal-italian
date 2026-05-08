@@ -42,6 +42,7 @@ function LoadingSplash() {
 
 function Dashboard() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [progress, setProgress] = useState<{
     xp: number;
     streak: number;
@@ -63,11 +64,17 @@ function Dashboard() {
     );
     supabase
       .from("profiles")
-      .select("display_name")
+      .select("display_name, onboarded")
       .eq("id", user.id)
       .maybeSingle()
-      .then(({ data }) => setName(data?.display_name ?? ""));
-  }, [user]);
+      .then(({ data }) => {
+        if (data && !data.onboarded) {
+          navigate({ to: "/onboarding" });
+          return;
+        }
+        setName(data?.display_name ?? "");
+      });
+  }, [user, navigate]);
 
   const today = new Date().toISOString().slice(0, 10);
   const dailyXp = progress?.daily_date === today ? progress?.daily_xp ?? 0 : 0;
