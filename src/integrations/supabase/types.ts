@@ -69,20 +69,35 @@ export type Database = {
         Row: {
           avatar_emoji: string | null
           created_at: string
+          current_level: string | null
+          daily_minutes: number | null
           display_name: string | null
+          goal_level: string | null
           id: string
+          motivation: string | null
+          onboarded: boolean
         }
         Insert: {
           avatar_emoji?: string | null
           created_at?: string
+          current_level?: string | null
+          daily_minutes?: number | null
           display_name?: string | null
+          goal_level?: string | null
           id: string
+          motivation?: string | null
+          onboarded?: boolean
         }
         Update: {
           avatar_emoji?: string | null
           created_at?: string
+          current_level?: string | null
+          daily_minutes?: number | null
           display_name?: string | null
+          goal_level?: string | null
           id?: string
+          motivation?: string | null
+          onboarded?: boolean
         }
         Relationships: []
       }
