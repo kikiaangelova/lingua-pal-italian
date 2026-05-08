@@ -92,7 +92,44 @@ export const categories: Category[] = [
       { it: "Dieci", en: "Ten", pron: "DYEH-chee" },
     ],
   },
+  {
+    id: "family",
+    title: "Famiglia",
+    emoji: "👨‍👩‍👧",
+    blurb: "People you love",
+    phrases: [
+      { it: "La madre", en: "Mother", pron: "la MA-dre" },
+      { it: "Il padre", en: "Father", pron: "eel PA-dre" },
+      { it: "Il fratello", en: "Brother", pron: "eel fra-TEL-lo" },
+      { it: "La sorella", en: "Sister", pron: "la so-REL-la" },
+      { it: "Il figlio", en: "Son", pron: "eel FEE-lyo" },
+      { it: "La figlia", en: "Daughter", pron: "la FEE-lya" },
+      { it: "L'amico", en: "Friend (m)", pron: "la-MEE-ko" },
+      { it: "L'amica", en: "Friend (f)", pron: "la-MEE-ka" },
+    ],
+  },
+  {
+    id: "time",
+    title: "Tempo",
+    emoji: "⏰",
+    blurb: "Days, time, weather",
+    phrases: [
+      { it: "Oggi", en: "Today", pron: "OD-jee" },
+      { it: "Domani", en: "Tomorrow", pron: "do-MA-nee" },
+      { it: "Ieri", en: "Yesterday", pron: "YEH-ree" },
+      { it: "Adesso", en: "Now", pron: "a-DES-so" },
+      { it: "Più tardi", en: "Later", pron: "pyoo TAR-dee" },
+      { it: "Fa caldo", en: "It's hot", pron: "fa KAL-do" },
+      { it: "Fa freddo", en: "It's cold", pron: "fa FRED-do" },
+      { it: "Piove", en: "It's raining", pron: "PYO-ve" },
+    ],
+  },
 ];
+
+// Quick lookup helper
+export function deckById(id: string) {
+  return categories.find((c) => c.id === id);
+}
 
 export const wordOfDay: Phrase = {
   it: "Dolce far niente",

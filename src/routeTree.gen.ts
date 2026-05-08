@@ -9,38 +9,198 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SpeakRouteImport } from './routes/speak'
+import { Route as ReadRouteImport } from './routes/read'
+import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as LearnRouteImport } from './routes/learn'
+import { Route as GrammarRouteImport } from './routes/grammar'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ReadStoryIdRouteImport } from './routes/read.$storyId'
+import { Route as LearnDeckIdRouteImport } from './routes/learn.$deckId'
+import { Route as GrammarLessonIdRouteImport } from './routes/grammar.$lessonId'
 
+const SpeakRoute = SpeakRouteImport.update({
+  id: '/speak',
+  path: '/speak',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReadRoute = ReadRouteImport.update({
+  id: '/read',
+  path: '/read',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LearnRoute = LearnRouteImport.update({
+  id: '/learn',
+  path: '/learn',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GrammarRoute = GrammarRouteImport.update({
+  id: '/grammar',
+  path: '/grammar',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ReadStoryIdRoute = ReadStoryIdRouteImport.update({
+  id: '/$storyId',
+  path: '/$storyId',
+  getParentRoute: () => ReadRoute,
+} as any)
+const LearnDeckIdRoute = LearnDeckIdRouteImport.update({
+  id: '/$deckId',
+  path: '/$deckId',
+  getParentRoute: () => LearnRoute,
+} as any)
+const GrammarLessonIdRoute = GrammarLessonIdRouteImport.update({
+  id: '/$lessonId',
+  path: '/$lessonId',
+  getParentRoute: () => GrammarRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/grammar': typeof GrammarRouteWithChildren
+  '/learn': typeof LearnRouteWithChildren
+  '/login': typeof LoginRoute
+  '/profile': typeof ProfileRoute
+  '/read': typeof ReadRouteWithChildren
+  '/speak': typeof SpeakRoute
+  '/grammar/$lessonId': typeof GrammarLessonIdRoute
+  '/learn/$deckId': typeof LearnDeckIdRoute
+  '/read/$storyId': typeof ReadStoryIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/grammar': typeof GrammarRouteWithChildren
+  '/learn': typeof LearnRouteWithChildren
+  '/login': typeof LoginRoute
+  '/profile': typeof ProfileRoute
+  '/read': typeof ReadRouteWithChildren
+  '/speak': typeof SpeakRoute
+  '/grammar/$lessonId': typeof GrammarLessonIdRoute
+  '/learn/$deckId': typeof LearnDeckIdRoute
+  '/read/$storyId': typeof ReadStoryIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/grammar': typeof GrammarRouteWithChildren
+  '/learn': typeof LearnRouteWithChildren
+  '/login': typeof LoginRoute
+  '/profile': typeof ProfileRoute
+  '/read': typeof ReadRouteWithChildren
+  '/speak': typeof SpeakRoute
+  '/grammar/$lessonId': typeof GrammarLessonIdRoute
+  '/learn/$deckId': typeof LearnDeckIdRoute
+  '/read/$storyId': typeof ReadStoryIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/grammar'
+    | '/learn'
+    | '/login'
+    | '/profile'
+    | '/read'
+    | '/speak'
+    | '/grammar/$lessonId'
+    | '/learn/$deckId'
+    | '/read/$storyId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/grammar'
+    | '/learn'
+    | '/login'
+    | '/profile'
+    | '/read'
+    | '/speak'
+    | '/grammar/$lessonId'
+    | '/learn/$deckId'
+    | '/read/$storyId'
+  id:
+    | '__root__'
+    | '/'
+    | '/grammar'
+    | '/learn'
+    | '/login'
+    | '/profile'
+    | '/read'
+    | '/speak'
+    | '/grammar/$lessonId'
+    | '/learn/$deckId'
+    | '/read/$storyId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  GrammarRoute: typeof GrammarRouteWithChildren
+  LearnRoute: typeof LearnRouteWithChildren
+  LoginRoute: typeof LoginRoute
+  ProfileRoute: typeof ProfileRoute
+  ReadRoute: typeof ReadRouteWithChildren
+  SpeakRoute: typeof SpeakRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/speak': {
+      id: '/speak'
+      path: '/speak'
+      fullPath: '/speak'
+      preLoaderRoute: typeof SpeakRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/read': {
+      id: '/read'
+      path: '/read'
+      fullPath: '/read'
+      preLoaderRoute: typeof ReadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/learn': {
+      id: '/learn'
+      path: '/learn'
+      fullPath: '/learn'
+      preLoaderRoute: typeof LearnRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/grammar': {
+      id: '/grammar'
+      path: '/grammar'
+      fullPath: '/grammar'
+      preLoaderRoute: typeof GrammarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +208,69 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/read/$storyId': {
+      id: '/read/$storyId'
+      path: '/$storyId'
+      fullPath: '/read/$storyId'
+      preLoaderRoute: typeof ReadStoryIdRouteImport
+      parentRoute: typeof ReadRoute
+    }
+    '/learn/$deckId': {
+      id: '/learn/$deckId'
+      path: '/$deckId'
+      fullPath: '/learn/$deckId'
+      preLoaderRoute: typeof LearnDeckIdRouteImport
+      parentRoute: typeof LearnRoute
+    }
+    '/grammar/$lessonId': {
+      id: '/grammar/$lessonId'
+      path: '/$lessonId'
+      fullPath: '/grammar/$lessonId'
+      preLoaderRoute: typeof GrammarLessonIdRouteImport
+      parentRoute: typeof GrammarRoute
+    }
   }
 }
 
+interface GrammarRouteChildren {
+  GrammarLessonIdRoute: typeof GrammarLessonIdRoute
+}
+
+const GrammarRouteChildren: GrammarRouteChildren = {
+  GrammarLessonIdRoute: GrammarLessonIdRoute,
+}
+
+const GrammarRouteWithChildren =
+  GrammarRoute._addFileChildren(GrammarRouteChildren)
+
+interface LearnRouteChildren {
+  LearnDeckIdRoute: typeof LearnDeckIdRoute
+}
+
+const LearnRouteChildren: LearnRouteChildren = {
+  LearnDeckIdRoute: LearnDeckIdRoute,
+}
+
+const LearnRouteWithChildren = LearnRoute._addFileChildren(LearnRouteChildren)
+
+interface ReadRouteChildren {
+  ReadStoryIdRoute: typeof ReadStoryIdRoute
+}
+
+const ReadRouteChildren: ReadRouteChildren = {
+  ReadStoryIdRoute: ReadStoryIdRoute,
+}
+
+const ReadRouteWithChildren = ReadRoute._addFileChildren(ReadRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  GrammarRoute: GrammarRouteWithChildren,
+  LearnRoute: LearnRouteWithChildren,
+  LoginRoute: LoginRoute,
+  ProfileRoute: ProfileRoute,
+  ReadRoute: ReadRouteWithChildren,
+  SpeakRoute: SpeakRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
