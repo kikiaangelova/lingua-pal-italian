@@ -122,9 +122,9 @@ function Dashboard() {
   const safeCurrent = currentIdx === -1 ? lessons.length - 1 : currentIdx;
 
   return (
-    <main className="mx-auto max-w-3xl px-5 pb-16 pt-6">
+    <main className="mx-auto max-w-3xl px-4 pb-16 pt-4 sm:px-5 sm:pt-6">
       {/* HERO with video bg */}
-      <section className="relative overflow-hidden rounded-[2rem] border border-white/20 shadow-2xl">
+      <section className="relative overflow-hidden rounded-3xl border border-white/20 shadow-2xl sm:rounded-[2rem]">
         <video
           src={bgVideo.url}
           autoPlay
@@ -134,11 +134,11 @@ function Dashboard() {
           className="absolute inset-0 h-full w-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-black/40 to-primary/40" />
-        <div className="relative z-10 px-6 py-14 sm:px-10 sm:py-20">
+        <div className="relative z-10 px-5 py-10 sm:px-10 sm:py-20">
           <span className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.3em] text-white backdrop-blur">
             <Sparkles className="h-3 w-3" /> Ciao{name ? `, ${name}` : ""}
           </span>
-          <h1 className="mt-4 text-5xl font-extrabold leading-[0.9] text-white sm:text-7xl">
+          <h1 className="mt-4 text-4xl font-extrabold leading-[0.95] text-white sm:text-7xl">
             Learn italian
             <br />
             <span
@@ -148,12 +148,12 @@ function Dashboard() {
               is easy.
             </span>
           </h1>
-          <p className="mt-4 max-w-md text-base text-white/80 sm:text-lg">
+          <p className="mt-3 max-w-md text-sm text-white/80 sm:mt-4 sm:text-lg">
             Not blocks. Not boring drills. Live the <em>vibe</em> — fashion, food, sport, culture — with Luca, your AI mentor.
           </p>
           <Link
             to="/tutor"
-            className="mt-6 inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-bold text-foreground transition hover:scale-105"
+            className="mt-5 inline-flex min-h-[48px] items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-bold text-foreground transition active:scale-95 sm:hover:scale-105"
             style={{ boxShadow: "var(--shadow-warm)" }}
           >
             Talk to Luca <ArrowRight className="h-4 w-4" />
@@ -163,27 +163,27 @@ function Dashboard() {
 
       {/* Continue learning */}
       <section
-        className="mt-6 flex items-center justify-between gap-4 rounded-3xl border border-border/60 bg-card p-5"
+        className="mt-6 flex items-center justify-between gap-3 rounded-3xl border border-border/60 bg-card p-4 sm:p-5"
         style={{ boxShadow: "var(--shadow-warm)" }}
       >
         <div className="min-w-0">
-          <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">
+          <p className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground sm:text-xs">
             {last ? "Continue learning" : "Start learning"}
           </p>
-          <h2 className="mt-1 truncate font-display text-2xl font-semibold text-foreground">
+          <h2 className="mt-1 truncate font-display text-xl font-semibold text-foreground sm:text-2xl">
             {continueLabel}
           </h2>
         </div>
-        <a
-          href={continueTo}
-          className="inline-flex shrink-0 items-center gap-2 rounded-full bg-primary px-5 py-3 text-sm font-bold text-primary-foreground transition hover:scale-105"
+        <Link
+          to={continueTo}
+          className="inline-flex min-h-[44px] shrink-0 items-center gap-2 rounded-full bg-primary px-4 py-2.5 text-sm font-bold text-primary-foreground transition active:scale-95 sm:px-5 sm:py-3 sm:hover:scale-105"
         >
           {last ? "Continue" : "Start"} <ArrowRight className="h-4 w-4" />
-        </a>
+        </Link>
       </section>
 
       {/* Profile card */}
-      <section className="-mt-8 mx-auto flex max-w-md items-center gap-4 rounded-3xl border border-white/30 bg-white/60 p-4 backdrop-blur-xl dark:bg-white/5"
+      <section className="mt-4 mx-auto flex max-w-md items-center gap-3 rounded-3xl border border-white/30 bg-white/60 p-3 backdrop-blur-xl dark:bg-white/5 sm:-mt-8 sm:gap-4 sm:p-4"
         style={{ boxShadow: "var(--shadow-soft)" }}
       >
         <img
@@ -191,7 +191,7 @@ function Dashboard() {
           alt="Profile"
           width={64}
           height={64}
-          className="h-16 w-16 rounded-full object-cover ring-2 ring-primary"
+          className="h-12 w-12 rounded-full object-cover ring-2 ring-primary sm:h-16 sm:w-16"
         />
         <div className="flex-1 min-w-0">
           <div className="font-display text-lg leading-tight">{name || "Studente"}</div>
