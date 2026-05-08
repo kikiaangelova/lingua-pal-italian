@@ -1,9 +1,10 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Sparkles, Volume2, BookOpen, Mic, GraduationCap, ScrollText, Flame, Trophy, ArrowRight, UserPlus, Check } from "lucide-react";
+import { Sparkles, Volume2, BookOpen, Mic, GraduationCap, ScrollText, Flame, Trophy, ArrowRight, UserPlus, Check, MapPin, Lock } from "lucide-react";
 import { useAuth } from "@/lib/auth";
-import { fetchProgress, levelFor, DAILY_GOAL } from "@/lib/progress";
+import { fetchProgress, levelFor, DAILY_GOAL, fetchCompletedLessons } from "@/lib/progress";
 import { wordOfDay } from "@/components/italian/data";
+import { lessons } from "@/components/italian/lessons";
 import { speakIt } from "@/lib/speak";
 import { supabase } from "@/integrations/supabase/client";
 import bgVideo from "@/assets/italy-bg.mp4.asset.json";
@@ -27,7 +28,7 @@ function Index() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   useEffect(() => {
-    if (!loading && !user) navigate({ to: "/login" });
+    if (!loading && !user) navigate({ to: "/try" });
   }, [loading, user, navigate]);
   if (loading || !user) return <LoadingSplash />;
   return <Dashboard />;
@@ -52,6 +53,7 @@ function Dashboard() {
   } | null>(null);
   const [name, setName] = useState<string>("");
   const [following, setFollowing] = useState(false);
+  const [completedIds, setCompletedIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     if (!user) return;
@@ -62,6 +64,9 @@ function Dashboard() {
         daily_xp: p?.daily_xp ?? 0,
         daily_date: p?.daily_date ?? null,
       }),
+    );
+    fetchCompletedLessons(user.id).then((rows) =>
+      setCompletedIds(new Set(rows.map((r) => r.lesson_id))),
     );
     supabase
       .from("profiles")
@@ -84,6 +89,10 @@ function Dashboard() {
   const last = getLastActivity();
   const continueTo = last?.to ?? "/learn";
   const continueLabel = last?.label ?? "Vocabulary decks";
+
+  // Build journey: first incomplete lesson is "current"
+  const currentIdx = Math.max(0, lessons.findIndex((l) => !completedIds.has(l.id)));
+  const safeCurrent = currentIdx === -1 ? lessons.length - 1 : currentIdx;
 
   return (
     <main className="mx-auto max-w-3xl px-5 pb-16 pt-6">
@@ -222,6 +231,66 @@ function Dashboard() {
         >
           <Volume2 className="h-4 w-4" /> Ascolta
         </button>
+      </section>
+
+      {/* Journey / learning map */}
+      <section className="mt-6">
+        <div className="mb-3 flex items-center justify-between">
+          <h3 className="font-display text-2xl font-semibold">Your journey</h3>
+          <span className="text-xs uppercase tracking-[0.25em] text-muted-foreground">
+            {completedIds.size}/{lessons.length} lessons
+          </span>
+        </div>
+        <ol className="relative space-y-2 border-l-2 border-dashed border-border/60 pl-5">
+          {lessons.map((l, i) => {
+            const done = completedIds.has(l.id);
+            const isCurrent = i === safeCurrent && !done;
+            const locked = i > safeCurrent && !done;
+            return (
+              <li key={l.id} className="relative">
+                <span
+                  className={
+                    "absolute -left-[30px] top-3 grid h-6 w-6 place-items-center rounded-full text-xs font-bold ring-4 ring-background " +
+                    (done
+                      ? "bg-primary text-primary-foreground"
+                      : isCurrent
+                        ? "bg-secondary text-secondary-foreground animate-pulse"
+                        : "bg-muted text-muted-foreground")
+                  }
+                >
+                  {done ? <Check className="h-3.5 w-3.5" /> : isCurrent ? <MapPin className="h-3.5 w-3.5" /> : locked ? <Lock className="h-3 w-3" /> : i + 1}
+                </span>
+                <Link
+                  to="/grammar/$lessonId"
+                  params={{ lessonId: l.id }}
+                  className={
+                    "block rounded-2xl border p-3 transition " +
+                    (isCurrent
+                      ? "border-primary/50 bg-card"
+                      : done
+                        ? "border-border/40 bg-card/60"
+                        : "border-border/60 bg-card hover:border-primary/30")
+                  }
+                  style={isCurrent ? { boxShadow: "var(--shadow-warm)" } : undefined}
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="min-w-0">
+                      <div className="font-display text-base font-semibold">
+                        {l.emoji} {l.title}
+                      </div>
+                      <div className="truncate text-xs text-muted-foreground">{l.blurb}</div>
+                    </div>
+                    {isCurrent && (
+                      <span className="shrink-0 rounded-full bg-primary px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-primary-foreground">
+                        You're here
+                      </span>
+                    )}
+                  </div>
+                </Link>
+              </li>
+            );
+          })}
+        </ol>
       </section>
 
       {/* Pillars */}
