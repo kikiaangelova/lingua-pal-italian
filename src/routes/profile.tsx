@@ -6,6 +6,18 @@ import { supabase } from "@/integrations/supabase/client";
 import { fetchProgress, levelFor, fetchLearnedWords, fetchCompletedLessons, fetchCompletedStories } from "@/lib/progress";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/italian/PageHeader";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { getLastActivity } from "@/lib/last-activity";
 
 export const Route = createFileRoute("/profile")({
   component: ProfilePage,
@@ -19,6 +31,7 @@ function ProfilePage() {
   const [name, setName] = useState("");
   const [emoji, setEmoji] = useState("🇮🇹");
   const [stats, setStats] = useState({ xp: 0, streak: 0, words: 0, lessons: 0, stories: 0 });
+  const last = getLastActivity();
 
   useEffect(() => {
     if (!loading && !user) navigate({ to: "/login" });
@@ -129,15 +142,42 @@ function ProfilePage() {
         <Stat icon={<BookCheck className="h-4 w-4 text-foreground" />} label="Lessons" value={String(stats.lessons)} />
       </section>
 
-      <button
-        onClick={async () => {
-          await signOut();
-          navigate({ to: "/login" });
-        }}
-        className="mt-8 inline-flex items-center gap-2 rounded-full border border-border bg-card px-5 py-2.5 text-sm font-medium text-foreground hover:bg-muted"
-      >
-        <LogOut className="h-4 w-4" /> Sign out
-      </button>
+      <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+        <button
+          onClick={() => navigate({ to: (last?.to ?? "/learn") as string })}
+          className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground hover:opacity-90"
+          style={{ boxShadow: "var(--shadow-warm)" }}
+        >
+          ▶ Continue: {last?.label ?? "Start learning"}
+        </button>
+
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <button className="inline-flex items-center justify-center gap-2 rounded-full border border-border bg-card px-5 py-2.5 text-sm font-medium text-foreground hover:bg-muted">
+              <LogOut className="h-4 w-4" /> Sign out
+            </button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Sign out of Ciao?</AlertDialogTitle>
+              <AlertDialogDescription>
+                You'll need to log back in to continue your Italian practice. Your progress is saved.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Stay signed in</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={async () => {
+                  await signOut();
+                  navigate({ to: "/login" });
+                }}
+              >
+                Sign out
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
     </main>
   );
 }
