@@ -26,14 +26,9 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   const { user, loading } = useAuth();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!loading && !user) navigate({ to: "/try" });
-  }, [loading, user, navigate]);
 
   if (loading) return <LoadingSplash />;
-  if (!user) return null;
+  if (!user) return <GuestHome />;
 
   return <Dashboard />;
 }
@@ -43,6 +38,72 @@ function LoadingSplash() {
     <div className="flex min-h-screen items-center justify-center">
       <div className="font-display text-3xl italic text-muted-foreground">Un momento…</div>
     </div>
+  );
+}
+
+function GuestHome() {
+  return (
+    <main className="mx-auto max-w-3xl px-4 pb-16 pt-6 sm:px-5 sm:pt-8">
+      <section
+        className="rounded-3xl border border-border/60 bg-card p-6 sm:p-8"
+        style={{ boxShadow: "var(--shadow-warm)" }}
+      >
+        <span className="inline-flex items-center gap-2 rounded-full border border-border bg-accent/40 px-3 py-1 text-xs uppercase tracking-[0.25em] text-muted-foreground">
+          <Sparkles className="h-3 w-3 text-primary" /> Learn Italian your way
+        </span>
+        <h1 className="mt-4 text-4xl font-extrabold leading-[0.95] text-foreground sm:text-6xl">
+          Start learning
+          <br />
+          <span className="text-primary">before you sign in.</span>
+        </h1>
+        <p className="mt-4 max-w-2xl text-sm text-muted-foreground sm:text-base">
+          Explore vocabulary, grammar, stories, and speaking right away. The daily goal is a target, not a cap — you can learn far more than five words in a day.
+        </p>
+
+        <div className="mt-6 flex flex-wrap gap-3">
+          <Link
+            to="/learn/greetings"
+            className="inline-flex min-h-[48px] items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-bold text-primary-foreground"
+            style={{ boxShadow: "var(--shadow-warm)" }}
+          >
+            Start first vocab quiz <ArrowRight className="h-4 w-4" />
+          </Link>
+          <Link
+            to="/grammar/$lessonId"
+            params={{ lessonId: lessons[0]!.id }}
+            className="inline-flex min-h-[48px] items-center gap-2 rounded-full border border-border bg-background px-6 py-3 text-sm font-bold text-foreground"
+          >
+            Start first grammar lesson
+          </Link>
+        </div>
+      </section>
+
+      <section className="mt-6 grid gap-3 sm:grid-cols-2">
+        <Tile to="/speak" icon={<Mic className="h-6 w-6" />} title="Speak" subtitle="Hear Italian and repeat it now" />
+        <Tile to="/read/mattina-roma" icon={<ScrollText className="h-6 w-6" />} title="Read" subtitle="Open a mini-story and do the check" />
+      </section>
+
+      <section
+        className="mt-6 rounded-3xl border border-border/60 bg-card p-5 sm:p-6"
+        style={{ boxShadow: "var(--shadow-soft)" }}
+      >
+        <h2 className="font-display text-2xl font-semibold text-foreground">How progress works</h2>
+        <div className="mt-4 grid gap-3 sm:grid-cols-3">
+          <div>
+            <p className="text-sm font-semibold text-foreground">Vocabulary</p>
+            <p className="mt-1 text-sm text-muted-foreground">Correct quiz answers mark words as learned.</p>
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-foreground">Grammar & reading</p>
+            <p className="mt-1 text-sm text-muted-foreground">Finished lesson checks move you forward on the journey map.</p>
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-foreground">Luca</p>
+            <p className="mt-1 text-sm text-muted-foreground">When you sign in, Luca can remember mistakes and adapt what comes next.</p>
+          </div>
+        </div>
+      </section>
+    </main>
   );
 }
 
