@@ -26,7 +26,8 @@ function GrammarPage() {
     setLastActivity({ to: "/grammar", label: "Grammar lessons" });
   }, [user]);
 
-  if (!user) return null;
+  if (loading) return <LoadingState />;
+  if (!user) return <RedirectingToLogin />;
 
   return (
     <main className="mx-auto max-w-2xl px-5 py-8 sm:py-12">
@@ -37,6 +38,27 @@ function GrammarPage() {
       <p className="mt-2 text-muted-foreground">
         Each lesson unlocks the next. Take your time.
       </p>
+
+      <section
+        className="mt-6 rounded-3xl border border-border/60 bg-accent/30 p-5"
+        style={{ boxShadow: "var(--shadow-soft)" }}
+      >
+        <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Start here</p>
+        <h2 className="mt-1 font-display text-2xl font-semibold text-foreground">
+          Learn → check → save progress
+        </h2>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Open any lesson to read the explanation, hear examples, then take the quiz. Your score updates your journey map automatically.
+        </p>
+        <Link
+          to="/grammar/$lessonId"
+          params={{ lessonId: lessons[0]!.id }}
+          className="mt-4 inline-flex min-h-[44px] items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground"
+          style={{ boxShadow: "var(--shadow-warm)" }}
+        >
+          Start first lesson <ArrowRight className="h-4 w-4" />
+        </Link>
+      </section>
 
       <ol className="mt-8 space-y-3">
         {lessons.map((l, idx) => {
@@ -67,6 +89,25 @@ function GrammarPage() {
           );
         })}
       </ol>
+    </main>
+  );
+}
+
+function LoadingState() {
+  return (
+    <main className="mx-auto flex min-h-screen max-w-2xl items-center justify-center px-5 py-12">
+      <p className="font-display text-3xl italic text-muted-foreground">Un momento…</p>
+    </main>
+  );
+}
+
+function RedirectingToLogin() {
+  return (
+    <main className="mx-auto flex min-h-screen max-w-2xl items-center justify-center px-5 py-12">
+      <div className="text-center">
+        <h1 className="font-display text-3xl font-semibold text-foreground">Sign in to save your lessons</h1>
+        <p className="mt-2 text-sm text-muted-foreground">You’ll be taken to login so your quizzes, mistakes, and journey map can be saved.</p>
+      </div>
     </main>
   );
 }
