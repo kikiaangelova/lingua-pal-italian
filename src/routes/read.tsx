@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
@@ -13,12 +13,7 @@ export const Route = createFileRoute("/read")({
 
 function ReadPage() {
   const { user, loading } = useAuth();
-  const navigate = useNavigate();
   const [done, setDone] = useState<Set<string>>(new Set());
-
-  useEffect(() => {
-    if (!loading && !user) navigate({ to: "/login" });
-  }, [loading, user, navigate]);
 
   useEffect(() => {
     if (!user) return;
@@ -26,7 +21,13 @@ function ReadPage() {
     setLastActivity({ to: "/read", label: "Mini stories" });
   }, [user]);
 
-  if (!user) return null;
+  if (loading) {
+    return (
+      <main className="mx-auto flex min-h-screen max-w-2xl items-center justify-center px-5 py-12">
+        <p className="font-display text-3xl italic text-muted-foreground">Un momento…</p>
+      </main>
+    );
+  }
 
   return (
     <main className="mx-auto max-w-2xl px-5 py-8 sm:py-12">
@@ -37,6 +38,11 @@ function ReadPage() {
       <p className="mt-2 text-muted-foreground">
         Tap any word to translate & hear it. Italy in 5 sentences.
       </p>
+      {!user && (
+        <p className="mt-2 text-sm text-muted-foreground">
+          You can read and test yourself first. Sign in when you want story progress saved.
+        </p>
+      )}
 
       <div className="mt-8 grid gap-3">
         {stories.map((s) => (
