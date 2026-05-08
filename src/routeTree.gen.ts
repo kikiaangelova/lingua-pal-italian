@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TutorRouteImport } from './routes/tutor'
 import { Route as SpeakRouteImport } from './routes/speak'
 import { Route as ReadRouteImport } from './routes/read'
 import { Route as ProfileRouteImport } from './routes/profile'
@@ -20,6 +21,11 @@ import { Route as ReadStoryIdRouteImport } from './routes/read.$storyId'
 import { Route as LearnDeckIdRouteImport } from './routes/learn.$deckId'
 import { Route as GrammarLessonIdRouteImport } from './routes/grammar.$lessonId'
 
+const TutorRoute = TutorRouteImport.update({
+  id: '/tutor',
+  path: '/tutor',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SpeakRoute = SpeakRouteImport.update({
   id: '/speak',
   path: '/speak',
@@ -79,6 +85,7 @@ export interface FileRoutesByFullPath {
   '/profile': typeof ProfileRoute
   '/read': typeof ReadRouteWithChildren
   '/speak': typeof SpeakRoute
+  '/tutor': typeof TutorRoute
   '/grammar/$lessonId': typeof GrammarLessonIdRoute
   '/learn/$deckId': typeof LearnDeckIdRoute
   '/read/$storyId': typeof ReadStoryIdRoute
@@ -91,6 +98,7 @@ export interface FileRoutesByTo {
   '/profile': typeof ProfileRoute
   '/read': typeof ReadRouteWithChildren
   '/speak': typeof SpeakRoute
+  '/tutor': typeof TutorRoute
   '/grammar/$lessonId': typeof GrammarLessonIdRoute
   '/learn/$deckId': typeof LearnDeckIdRoute
   '/read/$storyId': typeof ReadStoryIdRoute
@@ -104,6 +112,7 @@ export interface FileRoutesById {
   '/profile': typeof ProfileRoute
   '/read': typeof ReadRouteWithChildren
   '/speak': typeof SpeakRoute
+  '/tutor': typeof TutorRoute
   '/grammar/$lessonId': typeof GrammarLessonIdRoute
   '/learn/$deckId': typeof LearnDeckIdRoute
   '/read/$storyId': typeof ReadStoryIdRoute
@@ -118,6 +127,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/read'
     | '/speak'
+    | '/tutor'
     | '/grammar/$lessonId'
     | '/learn/$deckId'
     | '/read/$storyId'
@@ -130,6 +140,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/read'
     | '/speak'
+    | '/tutor'
     | '/grammar/$lessonId'
     | '/learn/$deckId'
     | '/read/$storyId'
@@ -142,6 +153,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/read'
     | '/speak'
+    | '/tutor'
     | '/grammar/$lessonId'
     | '/learn/$deckId'
     | '/read/$storyId'
@@ -155,10 +167,18 @@ export interface RootRouteChildren {
   ProfileRoute: typeof ProfileRoute
   ReadRoute: typeof ReadRouteWithChildren
   SpeakRoute: typeof SpeakRoute
+  TutorRoute: typeof TutorRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/tutor': {
+      id: '/tutor'
+      path: '/tutor'
+      fullPath: '/tutor'
+      preLoaderRoute: typeof TutorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/speak': {
       id: '/speak'
       path: '/speak'
@@ -271,7 +291,18 @@ const rootRouteChildren: RootRouteChildren = {
   ProfileRoute: ProfileRoute,
   ReadRoute: ReadRouteWithChildren,
   SpeakRoute: SpeakRoute,
+  TutorRoute: TutorRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
