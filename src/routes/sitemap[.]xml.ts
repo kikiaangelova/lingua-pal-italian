@@ -23,6 +23,10 @@ export const Route = createFileRoute("/sitemap.xml")({
           { path: "/grammar", changefreq: "weekly", priority: "0.8" },
           { path: "/read", changefreq: "weekly", priority: "0.8" },
           { path: "/speak", changefreq: "weekly", priority: "0.7" },
+          { path: "/login", changefreq: "monthly", priority: "0.3" },
+          { path: "/onboarding", changefreq: "monthly", priority: "0.3" },
+          { path: "/profile", changefreq: "monthly", priority: "0.3" },
+          { path: "/tutor", changefreq: "monthly", priority: "0.4" },
           ...lessons.map((l) => ({
             path: `/grammar/${l.id}`,
             changefreq: "monthly" as const,
