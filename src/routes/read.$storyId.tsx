@@ -12,7 +12,7 @@ export const Route = createFileRoute("/read/$storyId")({
     const story = storyById(params.storyId);
     const title = story ? `${story.title} — Italian mini story` : "Italian mini story — Ciao";
     const description = story
-      ? `${story.title} (${story.titleEn}). A short Italian story with tap-to-translate words, audio for every sentence and a quick comprehension check.`
+      ? `${story.title}. A short Italian story with tap-to-translate words, audio for every sentence and a quick comprehension check.`
       : "A short Italian story with tap-to-translate words and audio.";
     const url = `https://lingua-pal-italian.lovable.app/read/${params.storyId}`;
     return {
@@ -33,7 +33,6 @@ export const Route = createFileRoute("/read/$storyId")({
                 "@context": "https://schema.org",
                 "@type": "Article",
                 headline: story.title,
-                alternativeHeadline: story.titleEn,
                 inLanguage: "it",
                 articleSection: "Italian mini stories",
                 url,
