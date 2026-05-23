@@ -8,6 +8,26 @@ import { PageHeader } from "@/components/italian/PageHeader";
 import { setLastActivity } from "@/lib/last-activity";
 
 export const Route = createFileRoute("/grammar/")({
+  head: () => ({
+    meta: [
+      { title: "Grammar lessons — Ciao" },
+      {
+        name: "description",
+        content:
+          "Bite-size Italian grammar lessons with examples and quizzes — alphabet, articles, gender, essere & avere, -are verbs and more.",
+      },
+      { property: "og:title", content: "Grammar lessons — Ciao" },
+      {
+        property: "og:description",
+        content:
+          "Bite-size Italian grammar lessons with examples and quizzes — alphabet, articles, gender, essere & avere, -are verbs and more.",
+      },
+      { property: "og:url", content: "https://lingua-pal-italian.lovable.app/grammar" },
+    ],
+    links: [
+      { rel: "canonical", href: "https://lingua-pal-italian.lovable.app/grammar" },
+    ],
+  }),
   component: GrammarPage,
 });
 
