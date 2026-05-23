@@ -10,7 +10,22 @@ export const Route = createFileRoute("/tutor")({
   head: () => ({
     meta: [
       { title: "Luca — Your AI Italian Tutor" },
-      { name: "description", content: "Chat with Luca, your Gen Z Italian mentor & coach." },
+      {
+        name: "description",
+        content:
+          "Chat with Luca, your Gen Z Italian mentor and coach. He remembers your mistakes and guides every step toward fluency.",
+      },
+      { property: "og:title", content: "Luca — Your AI Italian Tutor" },
+      {
+        property: "og:description",
+        content:
+          "Chat with Luca, your Gen Z Italian mentor and coach. He remembers your mistakes and guides every step toward fluency.",
+      },
+      { property: "og:url", content: "https://lingua-pal-italian.lovable.app/tutor" },
+      { name: "robots", content: "noindex" },
+    ],
+    links: [
+      { rel: "canonical", href: "https://lingua-pal-italian.lovable.app/tutor" },
     ],
   }),
   component: TutorPage,
@@ -275,6 +290,7 @@ function TutorPage() {
             }
           }}
           rows={1}
+          aria-label="Message Luca"
           placeholder="Scrivi a Luca… (Enter to send)"
           className="min-h-[48px] flex-1 resize-none rounded-2xl border border-border/60 bg-card px-4 py-3 text-base outline-none focus:border-primary sm:text-sm"
         />
