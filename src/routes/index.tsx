@@ -18,8 +18,19 @@ export const Route = createFileRoute("/")({
       { title: "Ciao — Your Italian journey" },
       {
         name: "description",
-        content: "Daily vocabulary, speaking, grammar and reading. Buongiorno!",
+        content:
+          "Start your Italian journey with daily vocab, grammar, mini-stories, speaking practice and Luca, your AI tutor. Free, no email wall — buongiorno!",
       },
+      { property: "og:title", content: "Ciao — Your Italian journey" },
+      {
+        property: "og:description",
+        content:
+          "Start your Italian journey with daily vocab, grammar, mini-stories, speaking practice and Luca, your AI tutor. Free, no email wall — buongiorno!",
+      },
+      { property: "og:url", content: "https://lingua-pal-italian.lovable.app/" },
+    ],
+    links: [
+      { rel: "canonical", href: "https://lingua-pal-italian.lovable.app/" },
     ],
   }),
   component: Index,
@@ -295,7 +306,7 @@ function Dashboard() {
       >
         <img
           src={avatarDemo}
-          alt="Profile"
+          alt="Your learner profile photo"
           width={64}
           height={64}
           className="h-12 w-12 rounded-full object-cover ring-2 ring-primary sm:h-16 sm:w-16"
