@@ -77,15 +77,28 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Ciao — Learn Italian" },
-      { name: "description", content: "A playful, beautiful way to learn Italian." },
+      {
+        name: "description",
+        content:
+          "Learn Italian the playful way — daily vocab decks, bite-size grammar, mini-stories, speaking practice, and Luca, your AI tutor that remembers what you need.",
+      },
       { name: "author", content: "Lovable" },
       { property: "og:title", content: "Ciao — Learn Italian" },
-      { property: "og:description", content: "A playful, beautiful way to learn Italian." },
+      {
+        property: "og:description",
+        content:
+          "Learn Italian the playful way — daily vocab decks, bite-size grammar, mini-stories, speaking practice, and Luca, your AI tutor that remembers what you need.",
+      },
       { property: "og:type", content: "website" },
+      { property: "og:site_name", content: "Ciao — Learn Italian" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
       { name: "twitter:title", content: "Ciao — Learn Italian" },
-      { name: "twitter:description", content: "A playful, beautiful way to learn Italian." },
+      {
+        name: "twitter:description",
+        content:
+          "Learn Italian the playful way — daily vocab decks, bite-size grammar, mini-stories, speaking practice, and Luca, your AI tutor that remembers what you need.",
+      },
       { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/cab44ede-3ed9-435a-9333-18e69750acbf/id-preview-e86100cc--0ed5562d-40db-4986-b268-b91a036205e2.lovable.app-1778217778531.png" },
       { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/cab44ede-3ed9-435a-9333-18e69750acbf/id-preview-e86100cc--0ed5562d-40db-4986-b268-b91a036205e2.lovable.app-1778217778531.png" },
     ],
@@ -97,6 +110,29 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://cdn.gpteng.co", crossOrigin: "anonymous" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+    ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: "Ciao — Learn Italian",
+          url: "https://lingua-pal-italian.lovable.app",
+          description:
+            "Learn Italian the playful way — daily vocab decks, bite-size grammar, mini-stories, speaking practice, and an AI tutor.",
+          inLanguage: ["en", "it"],
+        }),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          name: "Ciao",
+          url: "https://lingua-pal-italian.lovable.app",
+        }),
+      },
     ],
   }),
   shellComponent: RootShell,
