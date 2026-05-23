@@ -9,6 +9,50 @@ import { speakIt } from "@/lib/speak";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/grammar/$lessonId")({
+  head: ({ params }) => {
+    const lesson = lessonById(params.lessonId);
+    const title = lesson ? `${lesson.title} — Italian grammar lesson` : "Italian grammar lesson — Ciao";
+    const description = lesson
+      ? `${lesson.title}: ${lesson.blurb}. Learn, see examples, then take a short quiz to lock it in.`
+      : "Italian grammar lesson with examples and a short quiz.";
+    const url = `https://lingua-pal-italian.lovable.app/grammar/${params.lessonId}`;
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description },
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
+        { property: "og:type", content: "article" },
+        { property: "og:url", content: url },
+      ],
+      links: [{ rel: "canonical", href: url }],
+      scripts: lesson
+        ? [
+            {
+              type: "application/ld+json",
+              children: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "Course",
+                name: lesson.title,
+                description: lesson.blurb,
+                inLanguage: "it",
+                educationalLevel: "Beginner",
+                provider: {
+                  "@type": "Organization",
+                  name: "Ciao",
+                  url: "https://lingua-pal-italian.lovable.app",
+                },
+                hasCourseInstance: {
+                  "@type": "CourseInstance",
+                  courseMode: "online",
+                  inLanguage: "it",
+                },
+              }),
+            },
+          ]
+        : undefined,
+    };
+  },
   component: LessonPage,
 });
 
@@ -61,6 +105,7 @@ function LessonPage() {
   if (phase === "done") {
     return (
       <main className="mx-auto max-w-2xl px-5 py-12">
+        <h1 className="sr-only">{lesson.title} — lesson complete</h1>
         <div
           className="rounded-3xl border border-border/60 bg-card p-8 text-center"
           style={{ boxShadow: "var(--shadow-warm)" }}
@@ -70,7 +115,7 @@ function LessonPage() {
           ) : (
             <Sparkles className="mx-auto h-10 w-10 text-primary" />
           )}
-          <h3 className="mt-3 font-display text-3xl font-semibold">Bravo!</h3>
+          <h2 className="mt-3 font-display text-3xl font-semibold">Bravo!</h2>
           <p className="mt-1 text-muted-foreground">
             {score} / {lesson.questions.length} correct
           </p>
@@ -122,7 +167,7 @@ function LessonPage() {
         </article>
 
         <section className="mt-6">
-          <h3 className="font-display text-xl font-semibold">Examples</h3>
+          <h2 className="font-display text-xl font-semibold">Examples</h2>
           {!user && (
             <p className="mt-2 text-sm text-muted-foreground">
               You can try this lesson without an account. When you sign in, completed quizzes update your journey map and Luca remembers what needs work.
@@ -141,6 +186,7 @@ function LessonPage() {
                 </div>
                 <button
                   onClick={() => speakIt(ex.it)}
+                  aria-label={`Listen to ${ex.it}`}
                   className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-background hover:bg-muted"
                 >
                   <Volume2 className="h-4 w-4" />
@@ -183,6 +229,7 @@ function LessonPage() {
 
   return (
     <main className="mx-auto max-w-2xl px-5 py-8 sm:py-12">
+      <h1 className="sr-only">{lesson.title} — quiz</h1>
       <div className="flex items-center justify-between text-sm text-muted-foreground">
         <span>Check · {qi + 1} / {lesson.questions.length}</span>
         <span>Score: {score}</span>

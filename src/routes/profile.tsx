@@ -20,6 +20,27 @@ import {
 import { getLastActivity } from "@/lib/last-activity";
 
 export const Route = createFileRoute("/profile")({
+  head: () => ({
+    meta: [
+      { title: "Your profile — Ciao" },
+      {
+        name: "description",
+        content:
+          "Your Italian learner profile — streak, XP, level, learned words and completed lessons all in one place.",
+      },
+      { property: "og:title", content: "Your profile — Ciao" },
+      {
+        property: "og:description",
+        content:
+          "Your Italian learner profile — streak, XP, level, learned words and completed lessons all in one place.",
+      },
+      { property: "og:url", content: "https://lingua-pal-italian.lovable.app/profile" },
+      { name: "robots", content: "noindex" },
+    ],
+    links: [
+      { rel: "canonical", href: "https://lingua-pal-italian.lovable.app/profile" },
+    ],
+  }),
   component: ProfilePage,
 });
 

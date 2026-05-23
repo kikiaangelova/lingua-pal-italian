@@ -7,6 +7,27 @@ import { Sparkles } from "lucide-react";
 import { lovable } from "@/integrations/lovable";
 
 export const Route = createFileRoute("/login")({
+  head: () => ({
+    meta: [
+      { title: "Sign in — Ciao" },
+      {
+        name: "description",
+        content:
+          "Sign in or create a free Ciao account to save your Italian streak, XP and journey map across devices.",
+      },
+      { property: "og:title", content: "Sign in — Ciao" },
+      {
+        property: "og:description",
+        content:
+          "Sign in or create a free Ciao account to save your Italian streak, XP and journey map across devices.",
+      },
+      { property: "og:url", content: "https://lingua-pal-italian.lovable.app/login" },
+      { name: "robots", content: "noindex" },
+    ],
+    links: [
+      { rel: "canonical", href: "https://lingua-pal-italian.lovable.app/login" },
+    ],
+  }),
   component: LoginPage,
 });
 

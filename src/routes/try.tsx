@@ -13,7 +13,15 @@ export const Route = createFileRoute("/try")({
         content: "Hear native Italian and learn 6 essential phrases — no sign-up needed.",
       },
       { property: "og:title", content: "Try a free Italian lesson — Ciao" },
-      { property: "og:description", content: "Hear native Italian, learn 6 phrases. No sign-up." },
+      {
+        property: "og:description",
+        content:
+          "Tap any phrase to hear native Italian pronunciation. Six essential phrases, no account required — start in 30 seconds.",
+      },
+      { property: "og:url", content: "https://lingua-pal-italian.lovable.app/try" },
+    ],
+    links: [
+      { rel: "canonical", href: "https://lingua-pal-italian.lovable.app/try" },
     ],
   }),
   component: TryPage,

@@ -11,6 +11,26 @@ import { PageHeader } from "@/components/italian/PageHeader";
 import { setLastActivity } from "@/lib/last-activity";
 
 export const Route = createFileRoute("/speak")({
+  head: () => ({
+    meta: [
+      { title: "Speaking practice — Ciao" },
+      {
+        name: "description",
+        content:
+          "Hear native Italian and repeat it now — daily speaking warm-ups with native voices, recording and instant playback.",
+      },
+      { property: "og:title", content: "Speaking practice — Ciao" },
+      {
+        property: "og:description",
+        content:
+          "Hear native Italian and repeat it now — daily speaking warm-ups with native voices, recording and instant playback.",
+      },
+      { property: "og:url", content: "https://lingua-pal-italian.lovable.app/speak" },
+    ],
+    links: [
+      { rel: "canonical", href: "https://lingua-pal-italian.lovable.app/speak" },
+    ],
+  }),
   component: SpeakPage,
 });
 

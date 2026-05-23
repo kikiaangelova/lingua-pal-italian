@@ -8,6 +8,26 @@ import { PageHeader } from "@/components/italian/PageHeader";
 import { setLastActivity } from "@/lib/last-activity";
 
 export const Route = createFileRoute("/learn/")({
+  head: () => ({
+    meta: [
+      { title: "Vocabulary decks — Ciao" },
+      {
+        name: "description",
+        content:
+          "Themed Italian vocabulary decks with native audio and quizzes — greetings, café, travel, food, feelings, numbers, family and time.",
+      },
+      { property: "og:title", content: "Vocabulary decks — Ciao" },
+      {
+        property: "og:description",
+        content:
+          "Themed Italian vocabulary decks with native audio and quizzes — greetings, café, travel, food, feelings, numbers, family and time.",
+      },
+      { property: "og:url", content: "https://lingua-pal-italian.lovable.app/learn" },
+    ],
+    links: [
+      { rel: "canonical", href: "https://lingua-pal-italian.lovable.app/learn" },
+    ],
+  }),
   component: LearnPage,
 });
 
@@ -58,7 +78,7 @@ function LearnPage() {
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <div className="text-3xl">{c.emoji}</div>
-                  <h3 className="mt-3 font-display text-2xl font-semibold text-foreground">{c.title}</h3>
+                  <h2 className="mt-3 font-display text-2xl font-semibold text-foreground">{c.title}</h2>
                   <p className="text-sm text-muted-foreground">{c.blurb}</p>
                 </div>
                 <ArrowRight className="h-5 w-5 shrink-0 text-muted-foreground transition group-hover:translate-x-1 group-hover:text-primary" />

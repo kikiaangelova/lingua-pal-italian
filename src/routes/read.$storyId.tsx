@@ -8,6 +8,44 @@ import { awardXp, completeStory } from "@/lib/progress";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/read/$storyId")({
+  head: ({ params }) => {
+    const story = storyById(params.storyId);
+    const title = story ? `${story.title} — Italian mini story` : "Italian mini story — Ciao";
+    const description = story
+      ? `${story.title}. A short Italian story with tap-to-translate words, audio for every sentence and a quick comprehension check.`
+      : "A short Italian story with tap-to-translate words and audio.";
+    const url = `https://lingua-pal-italian.lovable.app/read/${params.storyId}`;
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description },
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
+        { property: "og:type", content: "article" },
+        { property: "og:url", content: url },
+      ],
+      links: [{ rel: "canonical", href: url }],
+      scripts: story
+        ? [
+            {
+              type: "application/ld+json",
+              children: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "Article",
+                headline: story.title,
+                inLanguage: "it",
+                articleSection: "Italian mini stories",
+                url,
+                publisher: {
+                  "@type": "Organization",
+                  name: "Ciao",
+                },
+              }),
+            },
+          ]
+        : undefined,
+    };
+  },
   component: StoryPage,
 });
 
@@ -53,7 +91,7 @@ function StoryPage() {
           style={{ boxShadow: "var(--shadow-warm)" }}
         >
           <Sparkles className="mx-auto h-10 w-10 text-primary" />
-          <h3 className="mt-3 font-display text-3xl font-semibold">Storia finita!</h3>
+          <h2 className="mt-3 font-display text-3xl font-semibold">Storia finita!</h2>
           <p className="mt-1 text-muted-foreground">
             {score} / {story.questions.length} comprehension
           </p>
@@ -164,7 +202,7 @@ function StoryPage() {
       </article>
 
       <section className="mt-6">
-        <h3 className="font-display text-lg font-semibold">Vocabolario</h3>
+        <h2 className="font-display text-lg font-semibold">Vocabolario</h2>
         <ul className="mt-2 grid gap-1 text-sm">
           {story.glossary.map((g) => (
             <li key={g.it} className="flex justify-between border-b border-border/60 py-1">

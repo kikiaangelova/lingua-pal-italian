@@ -9,7 +9,22 @@ export const Route = createFileRoute("/onboarding")({
   head: () => ({
     meta: [
       { title: "Welcome — Set up your Italian journey" },
-      { name: "description", content: "Tell Luca about your goals and we'll build your daily plan." },
+      {
+        name: "description",
+        content:
+          "Tell Luca about your goals, current level and time available — we'll build your personalized daily Italian plan in 60 seconds.",
+      },
+      { property: "og:title", content: "Welcome — Set up your Italian journey" },
+      {
+        property: "og:description",
+        content:
+          "Tell Luca about your goals, current level and time available — we'll build your personalized daily Italian plan in 60 seconds.",
+      },
+      { property: "og:url", content: "https://lingua-pal-italian.lovable.app/onboarding" },
+      { name: "robots", content: "noindex" },
+    ],
+    links: [
+      { rel: "canonical", href: "https://lingua-pal-italian.lovable.app/onboarding" },
     ],
   }),
   component: OnboardingPage,
@@ -237,6 +252,7 @@ function StepName({ name, setName }: { name: string; setName: (v: string) => voi
         autoFocus
         value={name}
         onChange={(e) => setName(e.target.value)}
+        aria-label="Your name"
         placeholder="Maria"
         className="mt-6 w-full rounded-2xl border border-input bg-background px-5 py-4 text-2xl font-semibold text-foreground outline-none transition focus:border-primary"
       />

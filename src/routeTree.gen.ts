@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TutorRouteImport } from './routes/tutor'
 import { Route as TryRouteImport } from './routes/try'
 import { Route as SpeakRouteImport } from './routes/speak'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ReadRouteImport } from './routes/read'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
@@ -39,6 +40,11 @@ const TryRoute = TryRouteImport.update({
 const SpeakRoute = SpeakRouteImport.update({
   id: '/speak',
   path: '/speak',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ReadRoute = ReadRouteImport.update({
@@ -115,6 +121,7 @@ export interface FileRoutesByFullPath {
   '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
   '/read': typeof ReadRouteWithChildren
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/speak': typeof SpeakRoute
   '/try': typeof TryRoute
   '/tutor': typeof TutorRoute
@@ -130,6 +137,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/speak': typeof SpeakRoute
   '/try': typeof TryRoute
   '/tutor': typeof TutorRoute
@@ -149,6 +157,7 @@ export interface FileRoutesById {
   '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
   '/read': typeof ReadRouteWithChildren
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/speak': typeof SpeakRoute
   '/try': typeof TryRoute
   '/tutor': typeof TutorRoute
@@ -169,6 +178,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/profile'
     | '/read'
+    | '/sitemap.xml'
     | '/speak'
     | '/try'
     | '/tutor'
@@ -184,6 +194,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/onboarding'
     | '/profile'
+    | '/sitemap.xml'
     | '/speak'
     | '/try'
     | '/tutor'
@@ -202,6 +213,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/profile'
     | '/read'
+    | '/sitemap.xml'
     | '/speak'
     | '/try'
     | '/tutor'
@@ -221,6 +233,7 @@ export interface RootRouteChildren {
   OnboardingRoute: typeof OnboardingRoute
   ProfileRoute: typeof ProfileRoute
   ReadRoute: typeof ReadRouteWithChildren
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SpeakRoute: typeof SpeakRoute
   TryRoute: typeof TryRoute
   TutorRoute: typeof TutorRoute
@@ -247,6 +260,13 @@ declare module '@tanstack/react-router' {
       path: '/speak'
       fullPath: '/speak'
       preLoaderRoute: typeof SpeakRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/read': {
@@ -388,6 +408,7 @@ const rootRouteChildren: RootRouteChildren = {
   OnboardingRoute: OnboardingRoute,
   ProfileRoute: ProfileRoute,
   ReadRoute: ReadRouteWithChildren,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   SpeakRoute: SpeakRoute,
   TryRoute: TryRoute,
   TutorRoute: TutorRoute,

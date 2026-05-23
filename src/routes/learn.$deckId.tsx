@@ -10,6 +10,50 @@ import { setLastActivity } from "@/lib/last-activity";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/learn/$deckId")({
+  head: ({ params }) => {
+    const deck = deckById(params.deckId);
+    const title = deck ? `${deck.title} — Italian vocabulary deck` : "Italian vocabulary deck — Ciao";
+    const description = deck
+      ? `${deck.title}: ${deck.blurb}. Learn ${deck.phrases.length} essential Italian phrases with native audio and a short quiz.`
+      : "Italian vocabulary deck with native audio and quiz.";
+    const url = `https://lingua-pal-italian.lovable.app/learn/${params.deckId}`;
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description },
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
+        { property: "og:type", content: "article" },
+        { property: "og:url", content: url },
+      ],
+      links: [{ rel: "canonical", href: url }],
+      scripts: deck
+        ? [
+            {
+              type: "application/ld+json",
+              children: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "Course",
+                name: deck.title,
+                description: deck.blurb,
+                inLanguage: "it",
+                educationalLevel: "Beginner",
+                provider: {
+                  "@type": "Organization",
+                  name: "Ciao",
+                  url: "https://lingua-pal-italian.lovable.app",
+                },
+                hasCourseInstance: {
+                  "@type": "CourseInstance",
+                  courseMode: "online",
+                  inLanguage: "it",
+                },
+              }),
+            },
+          ]
+        : undefined,
+    };
+  },
   component: DeckPage,
 });
 
@@ -131,7 +175,7 @@ function Quiz({
         ) : (
           <Sparkles className="mx-auto h-10 w-10 text-primary" />
         )}
-        <h3 className="mt-3 font-display text-3xl font-semibold">Bravissimo!</h3>
+        <h2 className="mt-3 font-display text-3xl font-semibold">Bravissimo!</h2>
         <p className="mt-1 text-muted-foreground">
           You got <span className="font-semibold text-foreground">{score}</span> /{" "}
           {questions.length} correct.
