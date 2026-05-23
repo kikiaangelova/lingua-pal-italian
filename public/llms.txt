@@ -1,0 +1,23 @@
+# Ciao — Learn Italian
+
+> A playful, mentor-led way to learn Italian: vocab decks, bite-size grammar, mini-stories, speaking practice, and Luca — an AI Italian tutor that remembers what you need.
+
+Ciao is a mobile-first web app that teaches Italian through short, interactive lessons. Each lesson has a learn → quiz → done flow that awards XP and updates a personal journey map. Stories include tap-to-translate words and audio for every sentence.
+
+## Pages
+- [Home](/): Landing page with hero, lesson picks and signup.
+- [Try a free lesson](/try): Hear native Italian and learn 6 essential phrases — no sign-up needed.
+- [Vocabulary decks](/learn): Themed decks with flashcards and quizzes.
+- [Grammar lessons](/grammar): Bite-size grammar lessons with examples and quizzes.
+- [Mini stories](/read): Short Italian stories with tap-to-translate and audio.
+- [Speaking practice](/speak): Daily speaking warm-ups with native audio.
+
+## Sample lessons
+- [L'alfabeto & i suoni](/grammar/alphabet): Italian vowels and pronunciation.
+- [Gli articoli](/grammar/articles): The Italian articles il, la, lo, i, le, gli.
+- [Essere & Avere](/grammar/essere-avere): The two essential Italian verbs.
+
+## Sample stories
+- [Una mattina a Roma](/read/mattina-roma): A morning in Rome.
+- [Al mercato](/read/al-mercato): At the Italian market.
+- [In cucina con la nonna](/read/in-cucina): Cooking with grandma.

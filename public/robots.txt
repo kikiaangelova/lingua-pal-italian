@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+Disallow: /login
+Disallow: /onboarding
+Disallow: /profile
+Disallow: /tutor
+Disallow: /api/
+
+Sitemap: https://lingua-pal-italian.lovable.app/sitemap.xml
