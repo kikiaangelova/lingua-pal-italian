@@ -8,6 +8,26 @@ import { PageHeader } from "@/components/italian/PageHeader";
 import { setLastActivity } from "@/lib/last-activity";
 
 export const Route = createFileRoute("/read/")({
+  head: () => ({
+    meta: [
+      { title: "Italian mini stories — Ciao" },
+      {
+        name: "description",
+        content:
+          "Short Italian mini-stories with tap-to-translate words, audio for every sentence and a comprehension check — Italy in five sentences.",
+      },
+      { property: "og:title", content: "Italian mini stories — Ciao" },
+      {
+        property: "og:description",
+        content:
+          "Short Italian mini-stories with tap-to-translate words, audio for every sentence and a comprehension check — Italy in five sentences.",
+      },
+      { property: "og:url", content: "https://lingua-pal-italian.lovable.app/read" },
+    ],
+    links: [
+      { rel: "canonical", href: "https://lingua-pal-italian.lovable.app/read" },
+    ],
+  }),
   component: ReadPage,
 });
 
