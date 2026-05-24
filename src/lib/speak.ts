@@ -136,6 +136,36 @@ export async function speakIt(text: string): Promise<SpeakResult> {
       message: "Speech is not supported in this browser.",
     };
   }
+  // 1) Try server-side neural Italian voice (ElevenLabs).
+  try {
+    const r = await fetch("/api/tts", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text }),
+    });
+    if (r.ok) {
+      const blob = await r.blob();
+      const url = URL.createObjectURL(blob);
+      const audio = new Audio(url);
+      try {
+        await audio.play();
+        audio.onended = () => URL.revokeObjectURL(url);
+        return { ok: true, voiceName: "Neural Italian", voiceLang: "it-IT" };
+      } catch {
+        URL.revokeObjectURL(url);
+        return {
+          ok: false,
+          reason: "blocked",
+          message: "Tap again — your browser blocked autoplay until you interact.",
+        };
+      }
+    }
+    // 503 = not configured → fall through to browser TTS silently
+  } catch {
+    // network error → fall through
+  }
+
+  // 2) Fallback to browser speech synthesis.
   if (!window.speechSynthesis.getVoices().length) {
     await loadVoices();
   }
