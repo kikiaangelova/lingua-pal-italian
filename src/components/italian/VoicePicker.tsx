@@ -21,7 +21,7 @@ export function VoicePicker({ sample = "Ciao! Benvenuto in Italia." }: { sample?
         <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-muted-foreground">
           Italian audio
         </p>
-        <p className="mt-0.5 truncate text-sm text-foreground">Native voice, on tap.</p>
+        <p className="mt-0.5 truncate text-sm text-foreground">Tap once and hear Italian immediately.</p>
       </div>
       <button
         type="button"
@@ -29,7 +29,7 @@ export function VoicePicker({ sample = "Ciao! Benvenuto in Italia." }: { sample?
         disabled={busy}
         className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-4 py-2 text-sm font-medium hover:bg-muted disabled:opacity-60"
       >
-        {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Volume2 className="h-4 w-4" />} Test voice
+        {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Volume2 className="h-4 w-4" />} Play sample
       </button>
     </div>
   );

@@ -10,13 +10,13 @@ export const Route = createFileRoute("/try")({
       { title: "Try a free Italian lesson — Ciao" },
       {
         name: "description",
-        content: "Hear native Italian and learn 6 essential phrases — no sign-up needed.",
+        content: "Hear native Italian and try 6 essential phrases instantly.",
       },
       { property: "og:title", content: "Try a free Italian lesson — Ciao" },
       {
         property: "og:description",
         content:
-          "Tap any phrase to hear native Italian pronunciation. Six essential phrases, no account required — start in 30 seconds.",
+            "Tap any phrase to hear native Italian pronunciation and start your first lesson in seconds.",
       },
       { property: "og:url", content: "https://tryitalian.com/try" },
     ],

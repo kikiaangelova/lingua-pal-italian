@@ -75,6 +75,12 @@ function SpeakPage() {
   const chunksRef = useRef<Blob[]>([]);
   const [streamRef] = useState<{ stream: MediaStream | null }>({ stream: null });
 
+  useEffect(() => {
+    setListenCount(0);
+    setPlaysMine(0);
+    setAudioState({ type: "ready", message: "Tap Listen to hear Italian, then record yourself right away." });
+  }, [i]);
+
 
   if (loading) {
     return (
@@ -180,7 +186,7 @@ function SpeakPage() {
             }}
             className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-5 py-2.5 text-sm font-medium hover:bg-muted"
           >
-            <Volume2 className="h-4 w-4" /> Native
+            <Volume2 className="h-4 w-4" /> Listen
           </button>
           {!recording ? (
             <button
