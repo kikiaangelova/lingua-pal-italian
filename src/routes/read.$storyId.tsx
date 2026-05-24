@@ -248,8 +248,9 @@ function SentenceLine({
           return (
             <button
               key={i}
-              onClick={() => {
-                speakIt(t);
+              onClick={async () => {
+                const result = await speakIt(t);
+                if (!result.ok) toast.error(result.message);
                 setTappedWord(trans ? `${t} — ${trans}` : t);
                 setTimeout(() => setTappedWord(null), 1800);
               }}
@@ -263,7 +264,10 @@ function SentenceLine({
           );
         })}
         <button
-          onClick={() => speakIt(it)}
+          onClick={async () => {
+            const result = await speakIt(it);
+            if (!result.ok) toast.error(result.message);
+          }}
           className="ml-2 inline-flex h-7 w-7 items-center justify-center rounded-full border border-border bg-background align-middle text-foreground hover:bg-muted"
           aria-label="Listen"
         >
