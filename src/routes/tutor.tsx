@@ -1,10 +1,11 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { Send, Sparkles, Brain, X, ChevronDown, ChevronUp } from "lucide-react";
+import { Send, Sparkles, Brain, X, ChevronDown, ChevronUp, Loader2 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { PageHeader } from "@/components/italian/PageHeader";
 import { setLastActivity } from "@/lib/last-activity";
 import { supabase } from "@/integrations/supabase/client";
+import ReactMarkdown from "react-markdown";
 
 export const Route = createFileRoute("/tutor")({
   head: () => ({
@@ -39,9 +40,6 @@ const stripTags = (s: string) => s.replace(MISTAKE_RE, "").trim();
 function TutorPage() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
-  useEffect(() => {
-    if (!loading && !user) navigate({ to: "/login" });
-  }, [loading, user, navigate]);
 
   useEffect(() => {
     if (user) setLastActivity({ to: "/tutor", label: "Chat with Luca" });
@@ -58,6 +56,7 @@ function TutorPage() {
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
   const [mistakesOpen, setMistakesOpen] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // Load prior conversation + tracked mistakes so Luca feels like he remembers
@@ -90,6 +89,7 @@ function TutorPage() {
         );
       }
       await loadMistakes();
+      setLoadError(null);
     })();
 
     // Realtime: keep "Luca remembers" panel in sync as the server logs new mistakes
@@ -119,6 +119,10 @@ function TutorPage() {
   async function send() {
     const text = input.trim();
     if (!text || busy) return;
+    if (!user) {
+      navigate({ to: "/login" });
+      return;
+    }
     setInput("");
     const next: Msg[] = [...messages, { role: "user", content: text }];
     setMessages([...next, { role: "assistant", content: "" }]);
@@ -178,6 +182,7 @@ function TutorPage() {
       // Refresh mistakes after a turn (server may have added new ones)
       // (realtime channel above handles this automatically)
     } catch (e) {
+      setLoadError(e instanceof Error ? e.message : "Luca is unavailable right now.");
       setMessages((prev) => {
         const copy = [...prev];
         copy[copy.length - 1] = {
@@ -189,6 +194,57 @@ function TutorPage() {
     } finally {
       setBusy(false);
     }
+  }
+
+  if (loading) {
+    return (
+      <main className="mx-auto flex min-h-screen max-w-2xl items-center justify-center px-5 py-12">
+        <p className="font-display text-3xl italic text-muted-foreground">Un momento…</p>
+      </main>
+    );
+  }
+
+  if (!user) {
+    return (
+      <main className="mx-auto max-w-2xl px-5 py-8 sm:py-12">
+        <PageHeader title="Luca" crumbs={[{ label: "Luca" }]} />
+        <section
+          className="rounded-3xl border border-border/60 bg-card p-6 sm:p-8"
+          style={{ boxShadow: "var(--shadow-warm)" }}
+        >
+          <span className="inline-flex items-center gap-2 rounded-full border border-border bg-accent/40 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.3em] text-muted-foreground">
+            <Sparkles className="h-3 w-3 text-primary" /> Luca preview
+          </span>
+          <h1 className="mt-4 font-display text-3xl font-semibold text-foreground sm:text-4xl">
+            Meet Luca before you commit.
+          </h1>
+          <p className="mt-2 text-muted-foreground">
+            Luca remembers mistakes, adapts lessons across sessions, and turns your progress into guided next steps.
+          </p>
+          <div className="mt-5 rounded-2xl border border-border/60 bg-muted/40 p-4 text-sm text-foreground">
+            <p className="font-medium">Ciao! Sono Luca.</p>
+            <p className="mt-1 text-muted-foreground">
+              Tell me what feels hard right now — articles, speaking confidence, or surviving an Italian café — and I’ll coach you through it.
+            </p>
+          </div>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Link
+              to="/login"
+              className="inline-flex min-h-[48px] items-center gap-2 rounded-full bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground hover:opacity-90"
+              style={{ boxShadow: "var(--shadow-warm)" }}
+            >
+              Sign up to chat <Send className="h-4 w-4" />
+            </Link>
+            <Link
+              to="/try"
+              className="inline-flex min-h-[48px] items-center gap-2 rounded-full border border-border bg-background px-5 py-3 text-sm font-semibold text-foreground hover:bg-muted"
+            >
+              Hear Italian first
+            </Link>
+          </div>
+        </section>
+      </main>
+    );
   }
 
   return (
@@ -255,6 +311,11 @@ function TutorPage() {
             )}
           </div>
         )}
+        {loadError && (
+          <div className="mt-3 rounded-2xl border border-destructive/25 bg-destructive/8 px-3 py-2 text-sm text-foreground">
+            {loadError}
+          </div>
+        )}
       </header>
 
       <div
@@ -271,7 +332,21 @@ function TutorPage() {
                 : "bg-muted text-foreground")
             }
           >
-            {m.content || <span className="opacity-50">…</span>}
+            {m.content ? (
+              m.role === "assistant" ? (
+                <div className="prose prose-sm max-w-none prose-p:my-0 prose-strong:text-inherit prose-em:text-inherit prose-code:text-inherit">
+                  <ReactMarkdown>{m.content}</ReactMarkdown>
+                </div>
+              ) : (
+                m.content
+              )
+            ) : busy && i === messages.length - 1 ? (
+              <span className="inline-flex items-center gap-2 opacity-70">
+                <Loader2 className="h-4 w-4 animate-spin" /> Luca is thinking…
+              </span>
+            ) : (
+              <span className="opacity-50">…</span>
+            )}
           </div>
         ))}
       </div>
