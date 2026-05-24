@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WriteRouteImport } from './routes/write'
 import { Route as TutorRouteImport } from './routes/tutor'
 import { Route as TryRouteImport } from './routes/try'
 import { Route as SpeakRouteImport } from './routes/speak'
@@ -29,6 +30,11 @@ import { Route as GrammarLessonIdRouteImport } from './routes/grammar.$lessonId'
 import { Route as ApiTtsRouteImport } from './routes/api/tts'
 import { Route as AdminTutorUsageRouteImport } from './routes/admin.tutor-usage'
 
+const WriteRoute = WriteRouteImport.update({
+  id: '/write',
+  path: '/write',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TutorRoute = TutorRouteImport.update({
   id: '/tutor',
   path: '/tutor',
@@ -137,6 +143,7 @@ export interface FileRoutesByFullPath {
   '/speak': typeof SpeakRoute
   '/try': typeof TryRoute
   '/tutor': typeof TutorRoute
+  '/write': typeof WriteRoute
   '/admin/tutor-usage': typeof AdminTutorUsageRoute
   '/api/tts': typeof ApiTtsRoute
   '/grammar/$lessonId': typeof GrammarLessonIdRoute
@@ -155,6 +162,7 @@ export interface FileRoutesByTo {
   '/speak': typeof SpeakRoute
   '/try': typeof TryRoute
   '/tutor': typeof TutorRoute
+  '/write': typeof WriteRoute
   '/admin/tutor-usage': typeof AdminTutorUsageRoute
   '/api/tts': typeof ApiTtsRoute
   '/grammar/$lessonId': typeof GrammarLessonIdRoute
@@ -177,6 +185,7 @@ export interface FileRoutesById {
   '/speak': typeof SpeakRoute
   '/try': typeof TryRoute
   '/tutor': typeof TutorRoute
+  '/write': typeof WriteRoute
   '/admin/tutor-usage': typeof AdminTutorUsageRoute
   '/api/tts': typeof ApiTtsRoute
   '/grammar/$lessonId': typeof GrammarLessonIdRoute
@@ -200,6 +209,7 @@ export interface FileRouteTypes {
     | '/speak'
     | '/try'
     | '/tutor'
+    | '/write'
     | '/admin/tutor-usage'
     | '/api/tts'
     | '/grammar/$lessonId'
@@ -218,6 +228,7 @@ export interface FileRouteTypes {
     | '/speak'
     | '/try'
     | '/tutor'
+    | '/write'
     | '/admin/tutor-usage'
     | '/api/tts'
     | '/grammar/$lessonId'
@@ -239,6 +250,7 @@ export interface FileRouteTypes {
     | '/speak'
     | '/try'
     | '/tutor'
+    | '/write'
     | '/admin/tutor-usage'
     | '/api/tts'
     | '/grammar/$lessonId'
@@ -261,12 +273,20 @@ export interface RootRouteChildren {
   SpeakRoute: typeof SpeakRoute
   TryRoute: typeof TryRoute
   TutorRoute: typeof TutorRoute
+  WriteRoute: typeof WriteRoute
   AdminTutorUsageRoute: typeof AdminTutorUsageRoute
   ApiTtsRoute: typeof ApiTtsRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/write': {
+      id: '/write'
+      path: '/write'
+      fullPath: '/write'
+      preLoaderRoute: typeof WriteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/tutor': {
       id: '/tutor'
       path: '/tutor'
@@ -452,9 +472,20 @@ const rootRouteChildren: RootRouteChildren = {
   SpeakRoute: SpeakRoute,
   TryRoute: TryRoute,
   TutorRoute: TutorRoute,
+  WriteRoute: WriteRoute,
   AdminTutorUsageRoute: AdminTutorUsageRoute,
   ApiTtsRoute: ApiTtsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
