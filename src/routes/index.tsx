@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Sparkles, Volume2, BookOpen, Mic, GraduationCap, ScrollText, PenLine, Flame, Trophy, ArrowRight, UserPlus, Check, MapPin, Lock } from "lucide-react";
+import { Sparkles, Volume2, BookOpen, Mic, GraduationCap, ScrollText, PenLine, Flame, Trophy, ArrowRight, UserPlus, Check, MapPin, Lock, Users, Compass } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { fetchProgress, levelFor, DAILY_GOAL, fetchCompletedLessons } from "@/lib/progress";
 import { wordOfDay } from "@/components/italian/data";
@@ -446,6 +446,10 @@ function Dashboard() {
         <Tile to="/speak" icon={<Mic className="h-6 w-6" />} title="Speak" subtitle="Listen & repeat" />
         <Tile to="/grammar" icon={<GraduationCap className="h-6 w-6" />} title="Grammar" subtitle="Step by step" />
         <Tile to="/read" icon={<ScrollText className="h-6 w-6" />} title="Read" subtitle="Mini stories" />
+        <Tile to="/tutor" icon={<Sparkles className="h-6 w-6" />} title="Luca" subtitle="Tutor that remembers" />
+        <Tile to="/write" icon={<PenLine className="h-6 w-6" />} title="Write" subtitle="Daily correction" />
+        <Tile to="/read" icon={<Compass className="h-6 w-6" />} title="Immersion" subtitle="Stories & culture" />
+        <Tile to="/profile" icon={<Users className="h-6 w-6" />} title="Profile" subtitle="Progress & identity" />
       </section>
 
       <p className="mt-12 text-center text-sm italic text-muted-foreground">
