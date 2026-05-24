@@ -1,8 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { Mic, Square, Play, Volume2, Sparkles, ArrowRight } from "lucide-react";
+import { Mic, Square, Play, Volume2, Sparkles, ArrowRight, CheckCircle2, AlertCircle } from "lucide-react";
 import { useAuth } from "@/lib/auth";
-import { speakIt } from "@/lib/speak";
+import { loadVoices, speakIt } from "@/lib/speak";
 import { VoicePicker } from "@/components/italian/VoicePicker";
 import { categories } from "@/components/italian/data";
 import { awardXp } from "@/lib/progress";
@@ -65,9 +65,32 @@ function SpeakPage() {
     phrases.map(() => null),
   );
   const [recording, setRecording] = useState(false);
+  const [audioState, setAudioState] = useState<{
+    type: "idle" | "ready" | "playing" | "error";
+    message: string;
+  }>({ type: "idle", message: "Preparing Italian audio…" });
   const recRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
   const [streamRef] = useState<{ stream: MediaStream | null }>({ stream: null });
+
+  useEffect(() => {
+    let cancelled = false;
+    void loadVoices().then((voices) => {
+      if (cancelled) return;
+      const hasItalian = voices.some((voice) => voice.lang?.toLowerCase().startsWith("it"));
+      setAudioState(
+        hasItalian
+          ? { type: "ready", message: "Italian audio is ready. Tap Native to hear the phrase." }
+          : {
+              type: "error",
+              message: "No Italian voice found on this device yet. Open the voice picker for setup help.",
+            },
+      );
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   if (loading) {
     return (
@@ -154,7 +177,19 @@ function SpeakPage() {
 
         <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
           <button
-            onClick={() => speakIt(phrase.it)}
+            onClick={async () => {
+              setAudioState({ type: "playing", message: "Playing Italian audio…" });
+              const result = await speakIt(phrase.it);
+              if (result.ok) {
+                setAudioState({
+                  type: "ready",
+                  message: `Now copy the rhythm${result.voiceName ? ` · ${result.voiceName}` : ""}.`,
+                });
+              } else {
+                setAudioState({ type: "error", message: result.message });
+                toast.error(result.message);
+              }
+            }}
             className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-5 py-2.5 text-sm font-medium hover:bg-muted"
           >
             <Volume2 className="h-4 w-4" /> Native
@@ -186,6 +221,25 @@ function SpeakPage() {
               <Play className="h-4 w-4" /> Play me
             </button>
           )}
+        </div>
+      </section>
+
+      <section className="mt-4 rounded-2xl border border-border/60 bg-card/80 p-4" style={{ boxShadow: "var(--shadow-soft)" }}>
+        <div className="flex items-start gap-3">
+          <div className="mt-0.5">
+            {audioState.type === "error" ? (
+              <AlertCircle className="h-5 w-5 text-destructive" />
+            ) : (
+              <CheckCircle2 className="h-5 w-5 text-primary" />
+            )}
+          </div>
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground">Audio coach</p>
+            <p className="mt-1 text-sm text-foreground">{audioState.message}</p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Listen once. Repeat aloud. Record yourself. Then compare the melody, not just the words.
+            </p>
+          </div>
         </div>
       </section>
 

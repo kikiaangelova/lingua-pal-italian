@@ -262,7 +262,10 @@ function Quiz({
         <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">What does this mean?</p>
         <h2 className="mt-3 font-display text-4xl font-semibold text-foreground">{q.phrase.it}</h2>
         <button
-          onClick={() => speakIt(q.phrase.it)}
+          onClick={async () => {
+            const result = await speakIt(q.phrase.it);
+            if (!result.ok) toast.error(result.message);
+          }}
           className="mt-3 inline-flex items-center gap-2 rounded-full border border-border bg-background px-4 py-1.5 text-xs text-foreground hover:bg-muted"
         >
           <Volume2 className="h-3 w-3" /> Listen

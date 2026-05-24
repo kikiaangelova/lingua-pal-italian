@@ -7,6 +7,7 @@ import {
   setSelectedVoiceURI,
   speakIt,
 } from "@/lib/speak";
+import { toast } from "sonner";
 
 export function VoicePicker({ sample = "Ciao! Benvenuto. Sentiamo come suono." }: { sample?: string }) {
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
@@ -61,7 +62,10 @@ export function VoicePicker({ sample = "Ciao! Benvenuto. Sentiamo come suono." }
       </select>
       <button
         type="button"
-        onClick={() => speakIt(sample)}
+        onClick={async () => {
+          const result = await speakIt(sample);
+          if (!result.ok) toast.error(result.message);
+        }}
         className="inline-flex items-center gap-1.5 rounded-xl border border-border bg-background px-3 py-2 text-sm hover:bg-muted"
       >
         <Volume2 className="h-4 w-4" /> Test

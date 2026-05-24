@@ -1,5 +1,9 @@
 // Italian TTS helpers with voice selection + cross-browser voice loading.
 
+export type SpeakResult =
+  | { ok: true; voiceName?: string; voiceLang?: string }
+  | { ok: false; reason: "unsupported" | "no-voices" | "blocked" | "error"; message: string };
+
 const STORAGE_KEY = "it_voice_uri";
 
 function rankVoice(v: SpeechSynthesisVoice): number {
@@ -71,26 +75,69 @@ function pickVoice(): SpeechSynthesisVoice | null {
   return italians[0]; // best ranked
 }
 
-function doSpeak(text: string) {
+async function doSpeak(text: string): Promise<SpeakResult> {
   const synth = window.speechSynthesis;
   const u = new SpeechSynthesisUtterance(text);
   u.lang = "it-IT";
   u.rate = 0.95;
   u.pitch = 1;
   const voice = pickVoice();
+  if (!voice) {
+    return {
+      ok: false,
+      reason: "no-voices",
+      message: "No Italian voice is available on this device yet.",
+    };
+  }
   if (voice) {
     u.voice = voice;
     u.lang = voice.lang;
   }
-  synth.cancel();
-  synth.speak(u);
+  return await new Promise<SpeakResult>((resolve) => {
+    let settled = false;
+    const finish = (result: SpeakResult) => {
+      if (settled) return;
+      settled = true;
+      resolve(result);
+    };
+
+    u.onstart = () => finish({ ok: true, voiceName: voice.name, voiceLang: voice.lang });
+    u.onerror = () => {
+      finish({
+        ok: false,
+        reason: "blocked",
+        message: "Audio playback was blocked. Tap again after interacting with the page.",
+      });
+    };
+
+    try {
+      synth.cancel();
+      synth.speak(u);
+      window.setTimeout(() => {
+        if (!settled) {
+          finish({ ok: true, voiceName: voice.name, voiceLang: voice.lang });
+        }
+      }, 250);
+    } catch {
+      finish({
+        ok: false,
+        reason: "error",
+        message: "Italian audio could not start on this device.",
+      });
+    }
+  });
 }
 
-export function speakIt(text: string) {
-  if (typeof window === "undefined" || !window.speechSynthesis) return;
-  if (!window.speechSynthesis.getVoices().length) {
-    loadVoices().then(() => doSpeak(text));
-    return;
+export async function speakIt(text: string): Promise<SpeakResult> {
+  if (typeof window === "undefined" || !window.speechSynthesis) {
+    return {
+      ok: false,
+      reason: "unsupported",
+      message: "Speech is not supported in this browser.",
+    };
   }
-  doSpeak(text);
+  if (!window.speechSynthesis.getVoices().length) {
+    await loadVoices();
+  }
+  return doSpeak(text);
 }

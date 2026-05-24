@@ -1,15 +1,7 @@
 import { useState, useEffect } from "react";
 import { Volume2, RotateCw, ArrowRight, ArrowLeft, Check } from "lucide-react";
 import type { Phrase } from "./data";
-
-function speak(text: string) {
-  if (typeof window === "undefined" || !window.speechSynthesis) return;
-  const u = new SpeechSynthesisUtterance(text);
-  u.lang = "it-IT";
-  u.rate = 0.9;
-  window.speechSynthesis.cancel();
-  window.speechSynthesis.speak(u);
-}
+import { speakIt } from "@/lib/speak";
 
 type Props = { phrases: Phrase[]; categoryTitle: string };
 
@@ -47,9 +39,17 @@ export function Flashcard({ phrases, categoryTitle }: Props) {
         </span>
       </div>
 
-      <button
+      <div
+        role="button"
+        tabIndex={0}
         onClick={() => setFlipped((f) => !f)}
-        className="group relative h-72 w-full max-w-xl [perspective:1200px]"
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            setFlipped((f) => !f);
+          }
+        }}
+        className="group relative h-72 w-full max-w-xl cursor-pointer [perspective:1200px]"
         aria-label="Flip card"
       >
         <div
@@ -80,7 +80,7 @@ export function Flashcard({ phrases, categoryTitle }: Props) {
             <p className="text-sm italic opacity-80">{phrase.it}</p>
           </div>
         </div>
-      </button>
+      </div>
 
       <div className="flex flex-wrap items-center justify-center gap-3">
         <button
@@ -93,7 +93,7 @@ export function Flashcard({ phrases, categoryTitle }: Props) {
         <button
           onClick={(e) => {
             e.stopPropagation();
-            speak(phrase.it);
+            void speakIt(phrase.it);
           }}
           className="inline-flex h-11 items-center gap-2 rounded-full border border-border bg-card px-5 text-sm font-medium text-foreground transition hover:bg-muted"
         >

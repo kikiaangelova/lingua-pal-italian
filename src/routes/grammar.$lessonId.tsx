@@ -185,7 +185,10 @@ function LessonPage() {
                   <p className="text-sm text-muted-foreground">{ex.en}</p>
                 </div>
                 <button
-                  onClick={() => speakIt(ex.it)}
+                  onClick={async () => {
+                    const result = await speakIt(ex.it);
+                    if (!result.ok) toast.error(result.message);
+                  }}
                   aria-label={`Listen to ${ex.it}`}
                   className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-background hover:bg-muted"
                 >
