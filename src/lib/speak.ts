@@ -125,9 +125,8 @@ async function doSpeak(text: string): Promise<SpeakResult> {
 }
 
 export async function speakIt(text: string): Promise<SpeakResult> {
-  if (typeof window === "undefined" || !window.speechSynthesis) {
-    // Try server TTS even without speechSynthesis (e.g., very old browsers)
-    return tryServerOnly(text);
+  if (typeof window === "undefined") {
+    return { ok: false, reason: "unsupported", message: "Audio is loading…" };
   }
   // 1) Try server-side neural Italian voice (ElevenLabs).
   try {
@@ -149,7 +148,7 @@ export async function speakIt(text: string): Promise<SpeakResult> {
         return {
           ok: false,
           reason: "blocked",
-          message: "Tap again — your browser blocked autoplay until you interact.",
+          message: "Tap once more to start the audio.",
         };
       }
     }
@@ -159,6 +158,9 @@ export async function speakIt(text: string): Promise<SpeakResult> {
   }
 
   // 2) Fallback to browser speech synthesis.
+  if (!window.speechSynthesis) {
+    return { ok: false, reason: "error", message: "Audio didn't start. Tap Listen again." };
+  }
   if (!window.speechSynthesis.getVoices().length) {
     await loadVoices();
   }
