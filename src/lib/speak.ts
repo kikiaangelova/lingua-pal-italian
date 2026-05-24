@@ -82,17 +82,12 @@ async function doSpeak(text: string): Promise<SpeakResult> {
   u.rate = 0.95;
   u.pitch = 1;
   const voice = pickVoice();
-  if (!voice) {
-    return {
-      ok: false,
-      reason: "no-voices",
-      message: "No Italian voice is available on this device yet.",
-    };
-  }
   if (voice) {
     u.voice = voice;
     u.lang = voice.lang;
   }
+  // If no Italian voice exists, still try — the browser will use its default
+  // and we keep the messaging neutral instead of blaming the device.
   return await new Promise<SpeakResult>((resolve) => {
     let settled = false;
     const finish = (result: SpeakResult) => {
@@ -101,12 +96,13 @@ async function doSpeak(text: string): Promise<SpeakResult> {
       resolve(result);
     };
 
-    u.onstart = () => finish({ ok: true, voiceName: voice.name, voiceLang: voice.lang });
+    u.onstart = () =>
+      finish({ ok: true, voiceName: voice?.name, voiceLang: voice?.lang ?? "it-IT" });
     u.onerror = () => {
       finish({
         ok: false,
         reason: "blocked",
-        message: "Audio playback was blocked. Tap again after interacting with the page.",
+        message: "Tap once more to start the audio.",
       });
     };
 
@@ -115,26 +111,22 @@ async function doSpeak(text: string): Promise<SpeakResult> {
       synth.speak(u);
       window.setTimeout(() => {
         if (!settled) {
-          finish({ ok: true, voiceName: voice.name, voiceLang: voice.lang });
+          finish({ ok: true, voiceName: voice?.name, voiceLang: voice?.lang ?? "it-IT" });
         }
       }, 250);
     } catch {
       finish({
         ok: false,
         reason: "error",
-        message: "Italian audio could not start on this device.",
+        message: "Audio didn't start. Tap Listen again.",
       });
     }
   });
 }
 
 export async function speakIt(text: string): Promise<SpeakResult> {
-  if (typeof window === "undefined" || !window.speechSynthesis) {
-    return {
-      ok: false,
-      reason: "unsupported",
-      message: "Speech is not supported in this browser.",
-    };
+  if (typeof window === "undefined") {
+    return { ok: false, reason: "unsupported", message: "Audio is loading…" };
   }
   // 1) Try server-side neural Italian voice (ElevenLabs).
   try {
@@ -156,7 +148,7 @@ export async function speakIt(text: string): Promise<SpeakResult> {
         return {
           ok: false,
           reason: "blocked",
-          message: "Tap again — your browser blocked autoplay until you interact.",
+          message: "Tap once more to start the audio.",
         };
       }
     }
@@ -166,6 +158,9 @@ export async function speakIt(text: string): Promise<SpeakResult> {
   }
 
   // 2) Fallback to browser speech synthesis.
+  if (!window.speechSynthesis) {
+    return { ok: false, reason: "error", message: "Audio didn't start. Tap Listen again." };
+  }
   if (!window.speechSynthesis.getVoices().length) {
     await loadVoices();
   }

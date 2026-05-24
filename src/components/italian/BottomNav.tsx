@@ -1,13 +1,13 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { Home, BookOpen, Mic, GraduationCap, ScrollText, User, Sparkles } from "lucide-react";
+import { Home, BookOpen, Mic, ScrollText, PenLine, User, Sparkles } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 
 const items = [
   { to: "/", label: "Home", icon: Home },
   { to: "/learn", label: "Vocab", icon: BookOpen },
   { to: "/speak", label: "Speak", icon: Mic },
-  { to: "/grammar", label: "Grammar", icon: GraduationCap },
-  { to: "/read", label: "Stories", icon: ScrollText },
+  { to: "/read", label: "Read", icon: ScrollText },
+  { to: "/write", label: "Write", icon: PenLine },
   { to: "/profile", label: "Profile", icon: User },
 ] as const;
 

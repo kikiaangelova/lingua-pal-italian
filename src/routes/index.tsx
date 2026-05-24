@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Sparkles, Volume2, BookOpen, Mic, GraduationCap, ScrollText, Flame, Trophy, ArrowRight, UserPlus, Check, MapPin, Lock } from "lucide-react";
+import { Sparkles, Volume2, BookOpen, Mic, GraduationCap, ScrollText, PenLine, Flame, Trophy, ArrowRight, UserPlus, Check, MapPin, Lock } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { fetchProgress, levelFor, DAILY_GOAL, fetchCompletedLessons } from "@/lib/progress";
 import { wordOfDay } from "@/components/italian/data";
@@ -69,20 +69,20 @@ function GuestHome() {
         <div className="absolute inset-0 bg-gradient-to-br from-black/75 via-black/40 to-primary/40" />
         <div className="relative z-10 px-5 py-10 sm:px-10 sm:py-16">
           <span className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.3em] text-white backdrop-blur">
-            <Sparkles className="h-3 w-3" /> No sign-up. No fluff.
+            <Sparkles className="h-3 w-3" /> Listen · Speak · Read · Write
           </span>
           <h1 className="mt-4 text-5xl font-extrabold leading-[0.9] text-white sm:text-7xl">
-            Italiano,
+            Italian,
             <br />
             <span
               className="bg-clip-text text-transparent"
               style={{ backgroundImage: "var(--gradient-zest)" }}
             >
-              senza filtri.
+              the native way.
             </span>
           </h1>
           <p className="mt-3 max-w-md text-sm text-white/85 sm:text-base">
-            Tap. Hear native Italian. Roast yourself in a quiz. Meet Luca — the AI mentor who actually remembers you. Free, no email wall.
+            A calm, immersive Italian coach with native audio, real speaking, daily writing, and Luca — your AI mentor that remembers what you need.
           </p>
           <div className="mt-5 flex flex-wrap gap-2.5">
             <Link
@@ -131,8 +131,10 @@ function GuestHome() {
       </section>
 
       <section className="mt-6 grid gap-3 sm:grid-cols-2">
-        <Tile to="/speak" icon={<Mic className="h-6 w-6" />} title="Speak" subtitle="Hear Italian and repeat it now" />
-        <Tile to="/read" icon={<ScrollText className="h-6 w-6" />} title="Read" subtitle="Open a mini-story and do the check" />
+        <Tile to="/speak" icon={<Mic className="h-6 w-6" />} title="Speak" subtitle="Hear native Italian and repeat" />
+        <Tile to="/read" icon={<ScrollText className="h-6 w-6" />} title="Read" subtitle="Mini-stories with a quick check" />
+        <Tile to="/write" icon={<PenLine className="h-6 w-6" />} title="Write" subtitle="Daily prompts with native answers" />
+        <Tile to="/tutor" icon={<Sparkles className="h-6 w-6" />} title="Luca" subtitle="Your AI mentor, on tap" />
       </section>
 
       {/* Sign-up nudge */}
