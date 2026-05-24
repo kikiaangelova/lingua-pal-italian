@@ -1,8 +1,10 @@
-// Italian TTS helpers with voice selection + cross-browser voice loading.
+// Italian TTS helpers with voice selection + graceful server/browser fallback.
 
 export type SpeakResult =
   | { ok: true; voiceName?: string; voiceLang?: string }
   | { ok: false; reason: "unsupported" | "no-voices" | "blocked" | "error"; message: string };
+
+const GENERIC_RETRY_MESSAGE = "Audio is getting ready. Tap Listen again.";
 
 const STORAGE_KEY = "it_voice_uri";
 
@@ -102,7 +104,7 @@ async function doSpeak(text: string): Promise<SpeakResult> {
       finish({
         ok: false,
         reason: "blocked",
-        message: "Tap once more to start the audio.",
+        message: GENERIC_RETRY_MESSAGE,
       });
     };
 
@@ -118,7 +120,7 @@ async function doSpeak(text: string): Promise<SpeakResult> {
       finish({
         ok: false,
         reason: "error",
-        message: "Audio didn't start. Tap Listen again.",
+        message: GENERIC_RETRY_MESSAGE,
       });
     }
   });
@@ -148,7 +150,7 @@ export async function speakIt(text: string): Promise<SpeakResult> {
         return {
           ok: false,
           reason: "blocked",
-          message: "Tap once more to start the audio.",
+          message: GENERIC_RETRY_MESSAGE,
         };
       }
     }
@@ -159,7 +161,7 @@ export async function speakIt(text: string): Promise<SpeakResult> {
 
   // 2) Fallback to browser speech synthesis.
   if (!window.speechSynthesis) {
-    return { ok: false, reason: "error", message: "Audio didn't start. Tap Listen again." };
+    return { ok: false, reason: "error", message: GENERIC_RETRY_MESSAGE };
   }
   if (!window.speechSynthesis.getVoices().length) {
     await loadVoices();
