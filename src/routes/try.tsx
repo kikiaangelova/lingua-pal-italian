@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Volume2, ArrowRight, Sparkles, Check } from "lucide-react";
+import { Volume2, ArrowRight, Sparkles, Check, AlertCircle } from "lucide-react";
 import { speakIt, loadVoices } from "@/lib/speak";
 import italyHero from "@/assets/italy-hero.mp4.asset.json";
 
@@ -38,14 +38,27 @@ const SAMPLE = [
 
 function TryPage() {
   const [heard, setHeard] = useState<Set<number>>(new Set());
+  const [audioHint, setAudioHint] = useState<string>("Loading Italian audio…");
 
   useEffect(() => {
-    loadVoices();
+    void loadVoices().then((voices) => {
+      const hasItalian = voices.some((voice) => voice.lang?.toLowerCase().startsWith("it"));
+      setAudioHint(
+        hasItalian
+          ? "Tap any phrase to hear Italian instantly."
+          : "No Italian device voice found yet. Tap anyway after adding one in system speech settings.",
+      );
+    });
   }, []);
 
-  const play = (i: number, text: string) => {
-    speakIt(text);
-    setHeard((prev) => new Set(prev).add(i));
+  const play = async (i: number, text: string) => {
+    const result = await speakIt(text);
+    if (result.ok) {
+      setHeard((prev) => new Set(prev).add(i));
+      setAudioHint(result.voiceName ? `Playing on ${result.voiceName}.` : "Playing Italian audio.");
+      return;
+    }
+    setAudioHint(result.message);
   };
 
   const done = heard.size >= 3;
@@ -74,6 +87,10 @@ function TryPage() {
         <p className="mt-2 text-muted-foreground">
           Tap any phrase to hear native pronunciation.
         </p>
+        <div className="mx-auto mt-4 flex max-w-lg items-start justify-center gap-2 rounded-2xl border border-border/60 bg-card/70 px-4 py-3 text-left text-sm text-foreground backdrop-blur">
+          <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+          <p>{audioHint}</p>
+        </div>
       </div>
 
       <ul className="mt-6 space-y-3">
