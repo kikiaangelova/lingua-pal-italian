@@ -14,7 +14,7 @@ export const Route = createFileRoute("/read/$storyId")({
     const description = story
       ? `${story.title}. A short Italian story with tap-to-translate words, audio for every sentence and a quick comprehension check.`
       : "A short Italian story with tap-to-translate words and audio.";
-    const url = `https://lingua-pal-italian.lovable.app/read/${params.storyId}`;
+    const url = `https://tryitalian.com/read/${params.storyId}`;
     return {
       meta: [
         { title },

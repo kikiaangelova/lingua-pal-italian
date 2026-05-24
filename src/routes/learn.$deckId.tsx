@@ -16,7 +16,7 @@ export const Route = createFileRoute("/learn/$deckId")({
     const description = deck
       ? `${deck.title}: ${deck.blurb}. Learn ${deck.phrases.length} essential Italian phrases with native audio and a short quiz.`
       : "Italian vocabulary deck with native audio and quiz.";
-    const url = `https://lingua-pal-italian.lovable.app/learn/${params.deckId}`;
+    const url = `https://tryitalian.com/learn/${params.deckId}`;
     return {
       meta: [
         { title },
@@ -41,7 +41,7 @@ export const Route = createFileRoute("/learn/$deckId")({
                 provider: {
                   "@type": "Organization",
                   name: "Ciao",
-                  url: "https://lingua-pal-italian.lovable.app",
+                  url: "https://tryitalian.com",
                 },
                 hasCourseInstance: {
                   "@type": "CourseInstance",

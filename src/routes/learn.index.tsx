@@ -22,10 +22,10 @@ export const Route = createFileRoute("/learn/")({
         content:
           "Themed Italian vocabulary decks with native audio and quizzes — greetings, café, travel, food, feelings, numbers, family and time.",
       },
-      { property: "og:url", content: "https://lingua-pal-italian.lovable.app/learn" },
+      { property: "og:url", content: "https://tryitalian.com/learn" },
     ],
     links: [
-      { rel: "canonical", href: "https://lingua-pal-italian.lovable.app/learn" },
+      { rel: "canonical", href: "https://tryitalian.com/learn" },
     ],
   }),
   component: LearnPage,

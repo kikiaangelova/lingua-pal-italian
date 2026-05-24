@@ -21,11 +21,11 @@ export const Route = createFileRoute("/tutor")({
         content:
           "Chat with Luca, your Gen Z Italian mentor and coach. He remembers your mistakes and guides every step toward fluency.",
       },
-      { property: "og:url", content: "https://lingua-pal-italian.lovable.app/tutor" },
+      { property: "og:url", content: "https://tryitalian.com/tutor" },
       { name: "robots", content: "noindex" },
     ],
     links: [
-      { rel: "canonical", href: "https://lingua-pal-italian.lovable.app/tutor" },
+      { rel: "canonical", href: "https://tryitalian.com/tutor" },
     ],
   }),
   component: TutorPage,

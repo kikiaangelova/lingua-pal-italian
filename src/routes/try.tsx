@@ -18,10 +18,10 @@ export const Route = createFileRoute("/try")({
         content:
           "Tap any phrase to hear native Italian pronunciation. Six essential phrases, no account required — start in 30 seconds.",
       },
-      { property: "og:url", content: "https://lingua-pal-italian.lovable.app/try" },
+      { property: "og:url", content: "https://tryitalian.com/try" },
     ],
     links: [
-      { rel: "canonical", href: "https://lingua-pal-italian.lovable.app/try" },
+      { rel: "canonical", href: "https://tryitalian.com/try" },
     ],
   }),
   component: TryPage,

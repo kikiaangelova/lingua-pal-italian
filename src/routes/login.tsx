@@ -21,11 +21,11 @@ export const Route = createFileRoute("/login")({
         content:
           "Sign in or create a free Ciao account to save your Italian streak, XP and journey map across devices.",
       },
-      { property: "og:url", content: "https://lingua-pal-italian.lovable.app/login" },
+      { property: "og:url", content: "https://tryitalian.com/login" },
       { name: "robots", content: "noindex" },
     ],
     links: [
-      { rel: "canonical", href: "https://lingua-pal-italian.lovable.app/login" },
+      { rel: "canonical", href: "https://tryitalian.com/login" },
     ],
   }),
   component: LoginPage,

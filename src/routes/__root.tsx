@@ -119,7 +119,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "@context": "https://schema.org",
           "@type": "WebSite",
           name: "Ciao — Learn Italian",
-          url: "https://lingua-pal-italian.lovable.app",
+          url: "https://tryitalian.com",
           description:
             "Learn Italian the playful way — daily vocab decks, bite-size grammar, mini-stories, speaking practice, and an AI tutor.",
           inLanguage: ["en", "it"],
@@ -131,7 +131,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "@context": "https://schema.org",
           "@type": "Organization",
           name: "Ciao",
-          url: "https://lingua-pal-italian.lovable.app",
+          url: "https://tryitalian.com",
         }),
       },
     ],

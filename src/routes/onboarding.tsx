@@ -20,11 +20,11 @@ export const Route = createFileRoute("/onboarding")({
         content:
           "Tell Luca about your goals, current level and time available — we'll build your personalized daily Italian plan in 60 seconds.",
       },
-      { property: "og:url", content: "https://lingua-pal-italian.lovable.app/onboarding" },
+      { property: "og:url", content: "https://tryitalian.com/onboarding" },
       { name: "robots", content: "noindex" },
     ],
     links: [
-      { rel: "canonical", href: "https://lingua-pal-italian.lovable.app/onboarding" },
+      { rel: "canonical", href: "https://tryitalian.com/onboarding" },
     ],
   }),
   component: OnboardingPage,

@@ -4,7 +4,7 @@ import { lessons } from "@/components/italian/lessons";
 import { stories } from "@/components/italian/stories";
 import { categories } from "@/components/italian/data";
 
-const BASE_URL = "https://lingua-pal-italian.lovable.app";
+const BASE_URL = "https://tryitalian.com";
 
 interface SitemapEntry {
   path: string;

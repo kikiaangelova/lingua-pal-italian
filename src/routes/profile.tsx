@@ -34,11 +34,11 @@ export const Route = createFileRoute("/profile")({
         content:
           "Your Italian learner profile — streak, XP, level, learned words and completed lessons all in one place.",
       },
-      { property: "og:url", content: "https://lingua-pal-italian.lovable.app/profile" },
+      { property: "og:url", content: "https://tryitalian.com/profile" },
       { name: "robots", content: "noindex" },
     ],
     links: [
-      { rel: "canonical", href: "https://lingua-pal-italian.lovable.app/profile" },
+      { rel: "canonical", href: "https://tryitalian.com/profile" },
     ],
   }),
   component: ProfilePage,

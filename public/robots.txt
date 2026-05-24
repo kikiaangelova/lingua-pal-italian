@@ -7,4 +7,4 @@ Disallow: /profile
 Disallow: /tutor
 Disallow: /api/
 
-Sitemap: https://lingua-pal-italian.lovable.app/sitemap.xml
+Sitemap: https://tryitalian.com/sitemap.xml
