@@ -39,13 +39,19 @@ export function Flashcard({ phrases, categoryTitle }: Props) {
         </span>
       </div>
 
-      <div className="group relative h-72 w-full max-w-xl [perspective:1200px]">
-        <button
-          type="button"
-          onClick={() => setFlipped((f) => !f)}
-          className="absolute inset-0 z-0"
-          aria-label="Flip card"
-        />
+      <div
+        role="button"
+        tabIndex={0}
+        onClick={() => setFlipped((f) => !f)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            setFlipped((f) => !f);
+          }
+        }}
+        className="group relative h-72 w-full max-w-xl cursor-pointer [perspective:1200px]"
+        aria-label="Flip card"
+      >
         <div
           className="relative h-full w-full transition-transform duration-500 [transform-style:preserve-3d]"
           style={{ transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)" }}
