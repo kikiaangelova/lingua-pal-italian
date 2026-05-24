@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { Mic, Square, Play, Volume2, Sparkles, ArrowRight, CheckCircle2, AlertCircle } from "lucide-react";
 import { useAuth } from "@/lib/auth";
-import { loadVoices, speakIt } from "@/lib/speak";
+import { speakIt } from "@/lib/speak";
 import { VoicePicker } from "@/components/italian/VoicePicker";
 import { categories } from "@/components/italian/data";
 import { awardXp } from "@/lib/progress";
@@ -68,29 +68,11 @@ function SpeakPage() {
   const [audioState, setAudioState] = useState<{
     type: "idle" | "ready" | "playing" | "error";
     message: string;
-  }>({ type: "idle", message: "Preparing Italian audio…" });
+  }>({ type: "ready", message: "Tap Native to hear a native Italian voice." });
   const recRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
   const [streamRef] = useState<{ stream: MediaStream | null }>({ stream: null });
 
-  useEffect(() => {
-    let cancelled = false;
-    void loadVoices().then((voices) => {
-      if (cancelled) return;
-      const hasItalian = voices.some((voice) => voice.lang?.toLowerCase().startsWith("it"));
-      setAudioState(
-        hasItalian
-          ? { type: "ready", message: "Italian audio is ready. Tap Native to hear the phrase." }
-          : {
-              type: "error",
-              message: "No Italian voice found on this device yet. Open the voice picker for setup help.",
-            },
-      );
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
 
   if (loading) {
     return (
