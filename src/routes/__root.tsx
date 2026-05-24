@@ -12,6 +12,7 @@ import {
 import appCss from "../styles.css?url";
 import { AuthProvider, useAuth } from "@/lib/auth";
 import { BottomNav } from "@/components/italian/BottomNav";
+import { FloatingLuca } from "@/components/italian/FloatingLuca";
 import { Toaster } from "@/components/ui/sonner";
 
 function NotFoundComponent() {
@@ -184,6 +185,7 @@ function AppShell() {
     >
       <Outlet />
       {!loading && !onLogin ? <BottomNav /> : null}
+      {!loading && !onLogin ? <FloatingLuca /> : null}
     </div>
   );
 }
