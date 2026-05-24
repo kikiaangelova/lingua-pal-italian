@@ -22,10 +22,10 @@ export const Route = createFileRoute("/read/")({
         content:
           "Short Italian mini-stories with tap-to-translate words, audio for every sentence and a comprehension check — Italy in five sentences.",
       },
-      { property: "og:url", content: "https://lingua-pal-italian.lovable.app/read" },
+      { property: "og:url", content: "https://tryitalian.com/read" },
     ],
     links: [
-      { rel: "canonical", href: "https://lingua-pal-italian.lovable.app/read" },
+      { rel: "canonical", href: "https://tryitalian.com/read" },
     ],
   }),
   component: ReadPage,

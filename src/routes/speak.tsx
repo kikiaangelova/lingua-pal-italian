@@ -25,10 +25,10 @@ export const Route = createFileRoute("/speak")({
         content:
           "Hear native Italian and repeat it now — daily speaking warm-ups with native voices, recording and instant playback.",
       },
-      { property: "og:url", content: "https://lingua-pal-italian.lovable.app/speak" },
+      { property: "og:url", content: "https://tryitalian.com/speak" },
     ],
     links: [
-      { rel: "canonical", href: "https://lingua-pal-italian.lovable.app/speak" },
+      { rel: "canonical", href: "https://tryitalian.com/speak" },
     ],
   }),
   component: SpeakPage,

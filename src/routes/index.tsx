@@ -27,10 +27,10 @@ export const Route = createFileRoute("/")({
         content:
           "Start your Italian journey with daily vocab, grammar, mini-stories, speaking practice and Luca, your AI tutor. Free, no email wall — buongiorno!",
       },
-      { property: "og:url", content: "https://lingua-pal-italian.lovable.app/" },
+      { property: "og:url", content: "https://tryitalian.com/" },
     ],
     links: [
-      { rel: "canonical", href: "https://lingua-pal-italian.lovable.app/" },
+      { rel: "canonical", href: "https://tryitalian.com/" },
     ],
   }),
   component: Index,

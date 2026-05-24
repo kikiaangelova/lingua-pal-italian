@@ -22,10 +22,10 @@ export const Route = createFileRoute("/grammar/")({
         content:
           "Bite-size Italian grammar lessons with examples and quizzes — alphabet, articles, gender, essere & avere, -are verbs and more.",
       },
-      { property: "og:url", content: "https://lingua-pal-italian.lovable.app/grammar" },
+      { property: "og:url", content: "https://tryitalian.com/grammar" },
     ],
     links: [
-      { rel: "canonical", href: "https://lingua-pal-italian.lovable.app/grammar" },
+      { rel: "canonical", href: "https://tryitalian.com/grammar" },
     ],
   }),
   component: GrammarPage,

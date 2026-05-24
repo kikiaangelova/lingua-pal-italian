@@ -15,7 +15,7 @@ export const Route = createFileRoute("/grammar/$lessonId")({
     const description = lesson
       ? `${lesson.title}: ${lesson.blurb}. Learn, see examples, then take a short quiz to lock it in.`
       : "Italian grammar lesson with examples and a short quiz.";
-    const url = `https://lingua-pal-italian.lovable.app/grammar/${params.lessonId}`;
+    const url = `https://tryitalian.com/grammar/${params.lessonId}`;
     return {
       meta: [
         { title },
@@ -40,7 +40,7 @@ export const Route = createFileRoute("/grammar/$lessonId")({
                 provider: {
                   "@type": "Organization",
                   name: "Ciao",
-                  url: "https://lingua-pal-italian.lovable.app",
+                  url: "https://tryitalian.com",
                 },
                 hasCourseInstance: {
                   "@type": "CourseInstance",
