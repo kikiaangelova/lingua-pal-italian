@@ -1,49 +1,49 @@
-## Navigation redesign — Italian app
+## Goal
+Make the web experience feel complete for language learning by removing broken Italian voice messaging, making audio work gracefully without exposing technical failures, and adding the missing writing mode so learners can listen, speak, read, and write.
 
-Goal: no dead-ends, profile is easy to leave, persistent thumb-friendly bottom nav, clear "Continue learning" path.
+## What I’ll implement
 
-### 1. BottomNav (`src/components/italian/BottomNav.tsx`)
-Rebuild to match the requested 6 tabs and tighter mobile UX:
-- Tabs (in order): **Home, Vocab, Speak, Grammar, Read (Stories), Profile**.
-- Move **Luca (tutor)** off the bottom bar — promote on Home hero instead (already linked there). This keeps 6 tabs as requested.
-- Full-width fixed bar (`fixed bottom-0 inset-x-0`) with safe-area padding (`pb-[env(safe-area-inset-bottom)]`), not a floating pill — bigger tap targets (min 48px height), spreads across full width on mobile.
-- Active tab: filled pill + colored icon + label, with a small top accent bar for clarity. Inactive: muted icon + label.
-- Smooth `transition` and subtle scale on press.
-- Keep glassy backdrop, but remove the floating animation that makes it harder to tap.
+### 1. Fix the voice UX root cause
+- Remove all user-facing text like “No Italian voice is available on this device yet” and “No Italian system voice detected”.
+- Keep server-side Italian audio as the primary path.
+- Treat browser speech synthesis as a silent fallback only.
+- If neural audio is unavailable, show a calm generic retry message instead of device-setup instructions.
 
-### 2. Profile page (`src/routes/profile.tsx`)
-Add a top utility bar so users can always escape:
-- **Back** button (uses `router.history.back()` with safe fallback to `/`).
-- **Home** button (Link to `/`).
-- Title in the middle, **Sign out** moved into the top bar as a clear icon-button as well as the existing bottom one.
-- Add a small breadcrumb: `Home › Profile`.
-- Keep tap targets ≥44px.
+### 2. Rework the audio controls
+- Replace the current `VoicePicker` behavior with a simple Italian audio panel.
+- Remove the dependency on local Italian voice detection for the UI.
+- Keep a test/replay action and clear loading state.
+- Make the speaking page always feel usable, not blocked by browser capability checks.
 
-### 3. Shared `PageHeader` component (new: `src/components/italian/PageHeader.tsx`)
-Reusable Back + Home + breadcrumb header. Add it to:
-- `profile.tsx`
-- `learn.tsx`, `learn.$deckId.tsx`
-- `grammar.tsx`, `grammar.$lessonId.tsx`
-- `read.tsx`, `read.$storyId.tsx`
-- `speak.tsx`
-- `tutor.tsx`
-This guarantees no trapped screens.
+### 3. Fix speaking page messaging
+- Update the audio coach states so they never blame the user’s device.
+- Change the default status from technical setup language to learning-focused guidance.
+- Keep record/playback, but make playback failures surface as friendly retry feedback.
 
-### 4. Home dashboard (`src/routes/index.tsx`)
-- Add a **"Continue learning"** primary CTA card near the top (below hero) that resumes the user's last activity. MVP: read `last_route` from `localStorage` (set by a small effect in each section route). Falls back to `/learn` if none.
-- Reorder visual hierarchy: Hero → Continue Learning → Daily goal → Pillars → Word of the day → Profile mini-card moved lower (secondary).
-- Pillars grid updated to 5 tiles to mirror nav (Vocab, Speak, Grammar, Read, Luca).
+### 4. Add the missing writing mode
+- Create a dedicated writing practice route.
+- Add short guided prompts based on Italian phrases or mini-scenarios.
+- Include self-check feedback structure so the experience supports the full loop: listen, speak, read, write.
+- Add navigation/CTA entry points from the home experience.
 
-### 5. Last-activity tracking (`src/lib/last-activity.ts`, new)
-Tiny helper:
-- `setLastActivity({ to, label })` → localStorage
-- `getLastActivity()` → `{ to, label } | null`
-Called from a `useEffect` in each section route.
+### 5. Tighten landing messaging
+- Rewrite the hero copy so it sounds premium, calm, and intentional instead of chaotic.
+- Keep Gen Z energy, but make it emotionally consistent with a serious learning product.
+- Align the homepage promise with the actual product loop.
 
-### 6. AppShell (`src/routes/__root.tsx`)
-- Adjust `pb-32` → `pb-24` and ensure content isn't hidden behind the new full-width bar. Add safe-area padding.
+## Files likely affected
+- `src/lib/speak.ts`
+- `src/components/italian/VoicePicker.tsx`
+- `src/routes/speak.tsx`
+- `src/routes/index.tsx`
+- `src/components/italian/BottomNav.tsx`
+- new writing route under `src/routes/`
 
-### Out of scope (not changing now)
-- Onboarding flow content (already exists at `/onboarding`).
-- Auth screens.
-- Any backend/schema changes — `last_route` is client-only for now.
+## Technical notes
+- I will not rely on browser-installed Italian voices for core UX.
+- The app will prefer `/api/tts` and only fall back silently when needed.
+- The new writing route will follow existing route conventions and reuse the current design system.
+- I’ll keep the fix frontend-focused unless backend changes are truly required.
+
+## Expected outcome
+After this pass, users should no longer see broken Italian voice warnings, the speaking experience should feel intentional instead of fragile, and the app will finally support the core learning loop across listening, speaking, reading, and writing.
