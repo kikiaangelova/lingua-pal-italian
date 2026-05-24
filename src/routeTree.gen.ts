@@ -26,6 +26,7 @@ import { Route as GrammarIndexRouteImport } from './routes/grammar.index'
 import { Route as ReadStoryIdRouteImport } from './routes/read.$storyId'
 import { Route as LearnDeckIdRouteImport } from './routes/learn.$deckId'
 import { Route as GrammarLessonIdRouteImport } from './routes/grammar.$lessonId'
+import { Route as ApiTtsRouteImport } from './routes/api/tts'
 import { Route as AdminTutorUsageRouteImport } from './routes/admin.tutor-usage'
 
 const TutorRoute = TutorRouteImport.update({
@@ -113,6 +114,11 @@ const GrammarLessonIdRoute = GrammarLessonIdRouteImport.update({
   path: '/$lessonId',
   getParentRoute: () => GrammarRoute,
 } as any)
+const ApiTtsRoute = ApiTtsRouteImport.update({
+  id: '/api/tts',
+  path: '/api/tts',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminTutorUsageRoute = AdminTutorUsageRouteImport.update({
   id: '/admin/tutor-usage',
   path: '/admin/tutor-usage',
@@ -132,6 +138,7 @@ export interface FileRoutesByFullPath {
   '/try': typeof TryRoute
   '/tutor': typeof TutorRoute
   '/admin/tutor-usage': typeof AdminTutorUsageRoute
+  '/api/tts': typeof ApiTtsRoute
   '/grammar/$lessonId': typeof GrammarLessonIdRoute
   '/learn/$deckId': typeof LearnDeckIdRoute
   '/read/$storyId': typeof ReadStoryIdRoute
@@ -149,6 +156,7 @@ export interface FileRoutesByTo {
   '/try': typeof TryRoute
   '/tutor': typeof TutorRoute
   '/admin/tutor-usage': typeof AdminTutorUsageRoute
+  '/api/tts': typeof ApiTtsRoute
   '/grammar/$lessonId': typeof GrammarLessonIdRoute
   '/learn/$deckId': typeof LearnDeckIdRoute
   '/read/$storyId': typeof ReadStoryIdRoute
@@ -170,6 +178,7 @@ export interface FileRoutesById {
   '/try': typeof TryRoute
   '/tutor': typeof TutorRoute
   '/admin/tutor-usage': typeof AdminTutorUsageRoute
+  '/api/tts': typeof ApiTtsRoute
   '/grammar/$lessonId': typeof GrammarLessonIdRoute
   '/learn/$deckId': typeof LearnDeckIdRoute
   '/read/$storyId': typeof ReadStoryIdRoute
@@ -192,6 +201,7 @@ export interface FileRouteTypes {
     | '/try'
     | '/tutor'
     | '/admin/tutor-usage'
+    | '/api/tts'
     | '/grammar/$lessonId'
     | '/learn/$deckId'
     | '/read/$storyId'
@@ -209,6 +219,7 @@ export interface FileRouteTypes {
     | '/try'
     | '/tutor'
     | '/admin/tutor-usage'
+    | '/api/tts'
     | '/grammar/$lessonId'
     | '/learn/$deckId'
     | '/read/$storyId'
@@ -229,6 +240,7 @@ export interface FileRouteTypes {
     | '/try'
     | '/tutor'
     | '/admin/tutor-usage'
+    | '/api/tts'
     | '/grammar/$lessonId'
     | '/learn/$deckId'
     | '/read/$storyId'
@@ -250,6 +262,7 @@ export interface RootRouteChildren {
   TryRoute: typeof TryRoute
   TutorRoute: typeof TutorRoute
   AdminTutorUsageRoute: typeof AdminTutorUsageRoute
+  ApiTtsRoute: typeof ApiTtsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -373,6 +386,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GrammarLessonIdRouteImport
       parentRoute: typeof GrammarRoute
     }
+    '/api/tts': {
+      id: '/api/tts'
+      path: '/api/tts'
+      fullPath: '/api/tts'
+      preLoaderRoute: typeof ApiTtsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/tutor-usage': {
       id: '/admin/tutor-usage'
       path: '/admin/tutor-usage'
@@ -433,17 +453,8 @@ const rootRouteChildren: RootRouteChildren = {
   TryRoute: TryRoute,
   TutorRoute: TutorRoute,
   AdminTutorUsageRoute: AdminTutorUsageRoute,
+  ApiTtsRoute: ApiTtsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

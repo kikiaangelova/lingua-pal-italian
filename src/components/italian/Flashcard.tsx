@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { Volume2, RotateCw, ArrowRight, ArrowLeft, Check } from "lucide-react";
+import { Volume2, RotateCw, ArrowRight, ArrowLeft, Check, X, Loader2 } from "lucide-react";
 import type { Phrase } from "./data";
 import { speakIt } from "@/lib/speak";
+import { toast } from "sonner";
 
 type Props = { phrases: Phrase[]; categoryTitle: string };
 
@@ -9,11 +10,14 @@ export function Flashcard({ phrases, categoryTitle }: Props) {
   const [i, setI] = useState(0);
   const [flipped, setFlipped] = useState(false);
   const [known, setKnown] = useState<Set<number>>(new Set());
+  const [review, setReview] = useState<number[]>([]);
+  const [speaking, setSpeaking] = useState(false);
 
   useEffect(() => {
     setI(0);
     setFlipped(false);
     setKnown(new Set());
+    setReview([]);
   }, [categoryTitle]);
 
   const phrase = phrases[i];
@@ -29,13 +33,32 @@ export function Flashcard({ phrases, categoryTitle }: Props) {
     setKnown((s) => new Set(s).add(i));
     setTimeout(next, 200);
   };
+  const markUnknown = () => {
+    setReview((r) => (r.includes(i) ? r : [...r, i]));
+    setFlipped(true);
+    // Auto-listen so they hear it before moving on, then advance
+    void handleListen();
+    setTimeout(next, 1400);
+  };
+  const handleListen = async () => {
+    if (speaking) return;
+    setSpeaking(true);
+    try {
+      const res = await speakIt(phrase.it);
+      if (!res.ok) {
+        toast.error("Audio unavailable", { description: res.message });
+      }
+    } finally {
+      setSpeaking(false);
+    }
+  };
 
   return (
     <div className="flex flex-col items-center gap-6">
       <div className="flex w-full items-center justify-between text-sm text-muted-foreground">
         <span className="font-display text-lg italic text-foreground/70">{categoryTitle}</span>
         <span>
-          {i + 1} / {phrases.length} · {known.size} learned
+          {i + 1} / {phrases.length} · {known.size} learned · {review.length} to review
         </span>
       </div>
 
@@ -93,11 +116,18 @@ export function Flashcard({ phrases, categoryTitle }: Props) {
         <button
           onClick={(e) => {
             e.stopPropagation();
-            void speakIt(phrase.it);
+            void handleListen();
           }}
+          disabled={speaking}
+          className="inline-flex h-11 items-center gap-2 rounded-full border border-border bg-card px-5 text-sm font-medium text-foreground transition hover:bg-muted disabled:opacity-60"
+        >
+          {speaking ? <Loader2 className="h-4 w-4 animate-spin" /> : <Volume2 className="h-4 w-4" />} Listen
+        </button>
+        <button
+          onClick={markUnknown}
           className="inline-flex h-11 items-center gap-2 rounded-full border border-border bg-card px-5 text-sm font-medium text-foreground transition hover:bg-muted"
         >
-          <Volume2 className="h-4 w-4" /> Listen
+          <X className="h-4 w-4" /> I don't know
         </button>
         <button
           onClick={markKnown}
