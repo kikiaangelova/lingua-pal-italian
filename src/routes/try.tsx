@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Volume2, ArrowRight, Sparkles, Check, AlertCircle } from "lucide-react";
+import { Volume2, ArrowRight, Sparkles, Check, AlertCircle, Loader2 } from "lucide-react";
 import { speakIt, loadVoices } from "@/lib/speak";
 import italyHero from "@/assets/italy-hero.mp4.asset.json";
 
@@ -10,13 +10,13 @@ export const Route = createFileRoute("/try")({
       { title: "Try a free Italian lesson — Ciao" },
       {
         name: "description",
-        content: "Hear native Italian and learn 6 essential phrases — no sign-up needed.",
+        content: "Hear native Italian and try 6 essential phrases instantly.",
       },
       { property: "og:title", content: "Try a free Italian lesson — Ciao" },
       {
         property: "og:description",
         content:
-          "Tap any phrase to hear native Italian pronunciation. Six essential phrases, no account required — start in 30 seconds.",
+            "Tap any phrase to hear native Italian pronunciation and start your first lesson in seconds.",
       },
       { property: "og:url", content: "https://tryitalian.com/try" },
     ],
@@ -38,27 +38,29 @@ const SAMPLE = [
 
 function TryPage() {
   const [heard, setHeard] = useState<Set<number>>(new Set());
-  const [audioHint, setAudioHint] = useState<string>("Loading Italian audio…");
+  const [audioHint, setAudioHint] = useState<string>("Italian audio is ready — tap any phrase.");
+  const [playingIndex, setPlayingIndex] = useState<number | null>(null);
 
   useEffect(() => {
-    void loadVoices().then((voices) => {
-      const hasItalian = voices.some((voice) => voice.lang?.toLowerCase().startsWith("it"));
-      setAudioHint(
-        hasItalian
-          ? "Tap any phrase to hear Italian instantly."
-          : "No Italian device voice found yet. Tap anyway after adding one in system speech settings.",
-      );
+    void loadVoices().then(() => {
+      setAudioHint("Tap any phrase to hear Italian instantly.");
     });
   }, []);
 
   const play = async (i: number, text: string) => {
-    const result = await speakIt(text);
-    if (result.ok) {
-      setHeard((prev) => new Set(prev).add(i));
-      setAudioHint(result.voiceName ? `Playing on ${result.voiceName}.` : "Playing Italian audio.");
-      return;
+    setPlayingIndex(i);
+    setAudioHint("Playing Italian audio…");
+    try {
+      const result = await speakIt(text);
+      if (result.ok) {
+        setHeard((prev) => new Set(prev).add(i));
+        setAudioHint(result.voiceName ? `Now listening on ${result.voiceName}.` : "Italian audio is playing.");
+        return;
+      }
+      setAudioHint(result.message);
+    } finally {
+      setPlayingIndex(null);
     }
-    setAudioHint(result.message);
   };
 
   const done = heard.size >= 3;
@@ -79,7 +81,7 @@ function TryPage() {
       </div>
       <div className="text-center">
         <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card/70 px-3 py-1 text-xs uppercase tracking-[0.25em] text-muted-foreground backdrop-blur">
-          <Sparkles className="h-3 w-3 text-primary" /> Free sample · no sign-up
+          <Sparkles className="h-3 w-3 text-primary" /> Start with audio first
         </span>
         <h1 className="mt-3 font-display text-4xl font-bold leading-tight sm:text-5xl">
           Hear Italian. <em className="italic text-primary">Right now.</em>
@@ -105,10 +107,11 @@ function TryPage() {
               <button
                 onClick={() => play(i, p.it)}
                 aria-label={`Play ${p.it}`}
+                  disabled={playingIndex === i}
                 className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground transition active:scale-95"
                 style={{ boxShadow: "var(--shadow-warm)" }}
               >
-                <Volume2 className="h-5 w-5" />
+                  {playingIndex === i ? <Loader2 className="h-5 w-5 animate-spin" /> : <Volume2 className="h-5 w-5" />}
               </button>
               <div className="min-w-0 flex-1">
                 <div className="truncate font-display text-xl font-semibold text-foreground">

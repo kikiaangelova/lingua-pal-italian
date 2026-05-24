@@ -6,7 +6,7 @@ Ciao is a mobile-first web app that teaches Italian through short, interactive l
 
 ## Pages
 - [Home](/): Landing page with hero, lesson picks and signup.
-- [Try a free lesson](/try): Hear native Italian and learn 6 essential phrases — no sign-up needed.
+- [Try a free lesson](/try): Hear native Italian and learn 6 essential phrases instantly.
 - [Vocabulary decks](/learn): Themed decks with flashcards and quizzes.
 - [Grammar lessons](/grammar): Bite-size grammar lessons with examples and quizzes.
 - [Mini stories](/read): Short Italian stories with tap-to-translate and audio.

@@ -68,10 +68,18 @@ function SpeakPage() {
   const [audioState, setAudioState] = useState<{
     type: "idle" | "ready" | "playing" | "error";
     message: string;
-  }>({ type: "ready", message: "Tap Native to hear a native Italian voice." });
+  }>({ type: "ready", message: "Tap Listen to hear Italian, then record yourself right away." });
+  const [listenCount, setListenCount] = useState(0);
+  const [playsMine, setPlaysMine] = useState(0);
   const recRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
   const [streamRef] = useState<{ stream: MediaStream | null }>({ stream: null });
+
+  useEffect(() => {
+    setListenCount(0);
+    setPlaysMine(0);
+    setAudioState({ type: "ready", message: "Tap Listen to hear Italian, then record yourself right away." });
+  }, [i]);
 
 
   if (loading) {
@@ -104,14 +112,17 @@ function SpeakPage() {
       rec.start();
       recRef.current = rec;
       setRecording(true);
+      setAudioState({ type: "ready", message: "Recording… speak naturally and finish the whole phrase." });
     } catch {
       toast.error("Microphone not available");
+      setAudioState({ type: "error", message: "Microphone access is blocked. Allow it to practice speaking." });
     }
   };
 
   const stopRec = () => {
     recRef.current?.stop();
     setRecording(false);
+    setAudioState({ type: "ready", message: "Nice — now play yourself back and compare the melody." });
   };
 
   const next = async () => {
@@ -132,7 +143,7 @@ function SpeakPage() {
         Daily <em className="font-display italic text-primary">speaking</em>
       </h1>
       <p className="mt-2 text-muted-foreground">
-        Listen, repeat, then play yourself back. Mimic the rhythm.
+        Listen, speak, play yourself back, then move to the next phrase.
       </p>
       {!user && (
         <p className="mt-2 text-sm text-muted-foreground">
@@ -163,9 +174,10 @@ function SpeakPage() {
               setAudioState({ type: "playing", message: "Playing Italian audio…" });
               const result = await speakIt(phrase.it);
               if (result.ok) {
+                setListenCount((count) => count + 1);
                 setAudioState({
                   type: "ready",
-                  message: `Now copy the rhythm${result.voiceName ? ` · ${result.voiceName}` : ""}.`,
+                  message: `Now say it out loud${result.voiceName ? ` · ${result.voiceName}` : ""}.`,
                 });
               } else {
                 setAudioState({ type: "error", message: result.message });
@@ -174,7 +186,7 @@ function SpeakPage() {
             }}
             className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-5 py-2.5 text-sm font-medium hover:bg-muted"
           >
-            <Volume2 className="h-4 w-4" /> Native
+            <Volume2 className="h-4 w-4" /> Listen
           </button>
           {!recording ? (
             <button
@@ -197,6 +209,8 @@ function SpeakPage() {
               onClick={() => {
                 const a = new Audio(recordedUrls[i]!);
                 a.play();
+                setPlaysMine((count) => count + 1);
+                setAudioState({ type: "ready", message: "Good — compare your version with the Italian audio once more." });
               }}
               className="inline-flex items-center gap-2 rounded-full bg-secondary px-5 py-2.5 text-sm font-medium text-secondary-foreground hover:opacity-90"
             >
@@ -219,7 +233,9 @@ function SpeakPage() {
             <p className="text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground">Audio coach</p>
             <p className="mt-1 text-sm text-foreground">{audioState.message}</p>
             <p className="mt-1 text-xs text-muted-foreground">
-              Listen once. Repeat aloud. Record yourself. Then compare the melody, not just the words.
+              {recordedUrls[i]
+                ? `Listened ${listenCount}× · Played yourself back ${playsMine}× · Keep matching stress and pace, not just the words.`
+                : `Start with Listen, then Record me. Your voice practice works best when you hear the phrase first.`}
             </p>
           </div>
         </div>
