@@ -76,6 +76,37 @@ Deno.serve(async (req) => {
 
     const userId = userData.user.id;
 
+    // --- Per-user hourly soft cap (abuse / cost protection) ---
+    const HOURLY_CAP = 60;
+    try {
+      const { data: hourly } = await supabase.rpc("hourly_calls_for_user", { _user_id: userId });
+      if (typeof hourly === "number" && hourly >= HOURLY_CAP) {
+        await supabase.from("tutor_chat_usage").insert({
+          user_id: userId,
+          model: "google/gemini-2.5-flash",
+          message_count: cleanMessages.length,
+          char_count: cleanMessages.reduce((n, m) => n + m.content.length, 0),
+          status: "rate_limited",
+        });
+        console.warn("tutor-chat rate_limited", { userId, hourly });
+        return new Response(
+          JSON.stringify({ error: "Hourly limit reached. Riprova tra un'ora." }),
+          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        );
+      }
+    } catch (e) {
+      console.error("hourly_calls_for_user failed", e);
+    }
+
+    // --- Log usage (best-effort) ---
+    await supabase.from("tutor_chat_usage").insert({
+      user_id: userId,
+      model: "google/gemini-2.5-flash",
+      message_count: cleanMessages.length,
+      char_count: cleanMessages.reduce((n, m) => n + m.content.length, 0),
+      status: "ok",
+    });
+
     // --- Load prior conversation memory & known mistakes ---
     const { data: history } = await supabase
       .from("tutor_messages")
