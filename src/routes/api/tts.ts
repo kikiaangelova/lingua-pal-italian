@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { createClient } from "@supabase/supabase-js";
 
 // Server-side Italian neural TTS via ElevenLabs.
 // Returns raw MP3 bytes. If ELEVENLABS_API_KEY isn't set, returns 503
@@ -17,6 +18,37 @@ export const Route = createFileRoute("/api/tts")({
             JSON.stringify({ error: "tts_not_configured" }),
             { status: 503, headers: { "Content-Type": "application/json" } },
           );
+        }
+
+        // Require an authenticated Supabase user to prevent anonymous
+        // abuse of paid ElevenLabs quota.
+        const authHeader = request.headers.get("authorization") ?? "";
+        const token = authHeader.toLowerCase().startsWith("bearer ")
+          ? authHeader.slice(7).trim()
+          : "";
+        if (!token) {
+          return new Response(JSON.stringify({ error: "unauthorized" }), {
+            status: 401,
+            headers: { "Content-Type": "application/json" },
+          });
+        }
+        const SUPABASE_URL = process.env.SUPABASE_URL;
+        const SUPABASE_PUBLISHABLE_KEY = process.env.SUPABASE_PUBLISHABLE_KEY;
+        if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
+          return new Response(JSON.stringify({ error: "server_misconfigured" }), {
+            status: 500,
+            headers: { "Content-Type": "application/json" },
+          });
+        }
+        const authClient = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+          auth: { storage: undefined, persistSession: false, autoRefreshToken: false },
+        });
+        const { data: userData, error: userErr } = await authClient.auth.getUser(token);
+        if (userErr || !userData?.user) {
+          return new Response(JSON.stringify({ error: "unauthorized" }), {
+            status: 401,
+            headers: { "Content-Type": "application/json" },
+          });
         }
 
         let text = "";
@@ -50,7 +82,10 @@ export const Route = createFileRoute("/api/tts")({
 
         if (!r.ok) {
           const msg = await r.text().catch(() => "");
-          return new Response(JSON.stringify({ error: "upstream", detail: msg }), {
+          // Log upstream details server-side only; never echo upstream
+          // response bodies back to the browser.
+          console.error("[tts] ElevenLabs upstream error", r.status, msg);
+          return new Response(JSON.stringify({ error: "tts_unavailable" }), {
             status: 502,
             headers: { "Content-Type": "application/json" },
           });

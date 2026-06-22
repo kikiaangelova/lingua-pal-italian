@@ -4,7 +4,7 @@ import { ArrowRight, Check, PenLine, Volume2, Eye, EyeOff, Loader2 } from "lucid
 import { PageHeader } from "@/components/italian/PageHeader";
 import { useAuth } from "@/lib/auth";
 import { speakIt } from "@/lib/speak";
-import { awardXp } from "@/lib/progress";
+import { recordWritePractice } from "@/lib/progress";
 import { toast } from "sonner";
 import { setLastActivity } from "@/lib/last-activity";
 import { useEffect } from "react";
@@ -119,7 +119,7 @@ function WritePage() {
 
   const next = async () => {
     if (done && user) {
-      await awardXp(user.id, 5);
+      await recordWritePractice();
       toast.success("+5 XP", { duration: 900 });
     }
     setAnswer("");

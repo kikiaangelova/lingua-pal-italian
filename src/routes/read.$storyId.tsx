@@ -4,7 +4,7 @@ import { ArrowLeft, Volume2, Sparkles, Check, X, ArrowRight } from "lucide-react
 import { useAuth } from "@/lib/auth";
 import { storyById } from "@/components/italian/stories";
 import { speakIt } from "@/lib/speak";
-import { awardXp, completeStory } from "@/lib/progress";
+import { recordStoryComplete } from "@/lib/progress";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/read/$storyId")({
@@ -77,8 +77,7 @@ function StoryPage() {
   }
   const finish = async (final: number) => {
     if (user) {
-      await completeStory(user.id, story.id);
-      await awardXp(user.id, 10 + final * 5);
+      await recordStoryComplete(story.id, final);
     }
     setDone(true);
   };
