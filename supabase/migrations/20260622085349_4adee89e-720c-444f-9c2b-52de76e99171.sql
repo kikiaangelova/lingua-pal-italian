@@ -1,0 +1,1 @@
+grant execute on function public.hourly_calls_for_user(uuid) to authenticated;
