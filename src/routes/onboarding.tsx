@@ -105,8 +105,9 @@ function OnboardingPage() {
       if (error) throw error;
       toast.success("Andiamo! Your plan is ready.");
       navigate({ to: "/" });
-    } catch (err: any) {
-      toast.error(err.message ?? "Could not save");
+    } catch (err) {
+      console.error("[onboarding] save failed", err);
+      toast.error("Could not save your plan. Please try again.");
     } finally {
       setBusy(false);
     }

@@ -131,10 +131,19 @@ export async function speakIt(text: string): Promise<SpeakResult> {
     return { ok: false, reason: "unsupported", message: "Audio is loading…" };
   }
   // 1) Try server-side neural Italian voice (ElevenLabs).
+  //    Requires a signed-in user; we attach the Supabase bearer token.
+  //    Anonymous visitors fall straight through to browser speech synthesis.
   try {
+    const { supabase } = await import("@/integrations/supabase/client");
+    const { data } = await supabase.auth.getSession();
+    const token = data.session?.access_token;
+    if (!token) throw new Error("no_session");
     const r = await fetch("/api/tts", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
       body: JSON.stringify({ text }),
     });
     if (r.ok) {

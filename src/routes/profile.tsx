@@ -94,8 +94,14 @@ function ProfilePage() {
       .from("profiles")
       .update({ display_name: name, avatar_emoji: emoji })
       .eq("id", user.id);
-    if (error) toast.error(error.message);
-    else toast.success("Saved!");
+    if (error) {
+      // Log raw driver error server/console-side only — never surface
+      // PostgREST/Postgres messages (table/column/constraint names) to users.
+      console.error("[profile] update failed", error);
+      toast.error("Could not save your profile. Please try again.");
+    } else {
+      toast.success("Saved!");
+    }
   };
 
   return (
