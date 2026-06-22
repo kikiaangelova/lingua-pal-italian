@@ -5,7 +5,7 @@ import { useAuth } from "@/lib/auth";
 import { deckById } from "@/components/italian/data";
 import { Flashcard } from "@/components/italian/Flashcard";
 import { speakIt } from "@/lib/speak";
-import { awardXp, markWordLearned } from "@/lib/progress";
+import { recordWordLearned } from "@/lib/progress";
 import { setLastActivity } from "@/lib/last-activity";
 import { toast } from "sonner";
 
@@ -227,8 +227,7 @@ function Quiz({
       if (userId) {
         setSaving(true);
         try {
-          await markWordLearned(userId, deck!.id, q.phrase.it);
-          await awardXp(userId, 10);
+          await recordWordLearned(deck!.id, q.phrase.it);
           toast.success("+10 XP saved", { duration: 1200 });
         } finally {
           setSaving(false);

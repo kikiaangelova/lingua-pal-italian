@@ -4,7 +4,7 @@ import ReactMarkdown from "react-markdown";
 import { ArrowLeft, Check, X, Sparkles, Volume2, ArrowRight, Loader2, Link2 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { lessonById } from "@/components/italian/lessons";
-import { awardXp, completeLesson } from "@/lib/progress";
+import { recordLessonComplete } from "@/lib/progress";
 import { speakIt } from "@/lib/speak";
 import { toast } from "sonner";
 
@@ -87,8 +87,7 @@ function LessonPage() {
     if (user) {
       setSaving(true);
       try {
-        await completeLesson(user.id, lesson.id, finalScore);
-        await awardXp(user.id, finalScore * 5);
+        await recordLessonComplete(lesson.id, finalScore);
       } finally {
         setSaving(false);
       }

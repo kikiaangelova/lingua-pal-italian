@@ -5,7 +5,7 @@ import { useAuth } from "@/lib/auth";
 import { speakIt } from "@/lib/speak";
 import { VoicePicker } from "@/components/italian/VoicePicker";
 import { categories } from "@/components/italian/data";
-import { awardXp } from "@/lib/progress";
+import { recordSpeakPractice } from "@/lib/progress";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/italian/PageHeader";
 import { setLastActivity } from "@/lib/last-activity";
@@ -127,7 +127,7 @@ function SpeakPage() {
 
   const next = async () => {
     if (user) {
-      await awardXp(user.id, 5);
+      await recordSpeakPractice();
       toast.success("+5 XP", { duration: 1000 });
     } else {
       toast.success("Great repetition", { duration: 1000 });
