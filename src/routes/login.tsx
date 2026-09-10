@@ -66,7 +66,9 @@ function LoginPage() {
           email,
           password,
           options: {
-            emailRedirectTo: window.location.origin,
+            emailRedirectTo: returnTo
+              ? window.location.origin + returnTo
+              : window.location.origin,
             data: { display_name: name || email.split("@")[0] },
           },
         });
