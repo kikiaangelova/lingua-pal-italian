@@ -1,0 +1,136 @@
+{
+  "version": 1,
+  "sdk_version": "2.0.4",
+  "path": "/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://vtkcvaoskdkukidozliy.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "speak-italian",
+      "version": "0.1.0",
+      "title": "Speak Italian!"
+    },
+    "tools": [
+      {
+        "name": "get_progress",
+        "title": "Get my Italian progress",
+        "description": "Get the signed-in learner's XP, daily XP, streak and last active date.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_completed_lessons",
+        "title": "List completed lessons",
+        "description": "List grammar/vocab lessons the signed-in learner has completed, newest first, with scores.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "limit": {
+              "type": "integer",
+              "description": "How many lessons to return (default 20, max 100)."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_vocabulary",
+        "title": "List learned words",
+        "description": "List Italian words the signed-in learner has practised, with how many times each was correct.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "deck_id": {
+              "type": "string",
+              "description": "Only return words from this deck."
+            },
+            "limit": {
+              "type": "integer",
+              "description": "How many words to return (default 50, max 200)."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_mistakes",
+        "title": "List recurring mistakes",
+        "description": "List the Italian topics the learner keeps getting wrong, with how often and a short note.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "limit": {
+              "type": "integer",
+              "description": "How many topics to return (default 20, max 100)."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "record_mistake",
+        "title": "Record a mistake to review",
+        "description": "Save an Italian topic the learner got wrong so Luca revisits it in future sessions. Increments the count when the topic already exists.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "topic": {
+              "type": "string",
+              "description": "Short lowercase-with-dashes slug, e.g. \"passato-prossimo\"."
+            },
+            "note": {
+              "type": "string",
+              "description": "One-sentence note about the mistake."
+            }
+          },
+          "required": [
+            "topic"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
