@@ -28,12 +28,22 @@ export const Route = createFileRoute("/login")({
       { rel: "canonical", href: "https://tryitalian.com/login" },
     ],
   }),
+  validateSearch: (s: Record<string, unknown>): { next?: string } =>
+    typeof s.next === "string" ? { next: s.next } : {},
   component: LoginPage,
 });
+
+/** Only allow same-origin relative paths as a post-login destination. */
+function safeNext(next?: string) {
+  if (!next || !next.startsWith("/") || next.startsWith("//")) return null;
+  return next;
+}
 
 function LoginPage() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
+  const { next } = Route.useSearch();
+  const returnTo = safeNext(next);
   const [mode, setMode] = useState<"login" | "signup">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -41,8 +51,11 @@ function LoginPage() {
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    if (!loading && user) navigate({ to: "/" });
-  }, [user, loading, navigate]);
+    if (!loading && user) {
+      if (returnTo) window.location.href = returnTo;
+      else navigate({ to: "/" });
+    }
+  }, [user, loading, navigate, returnTo]);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,7 +66,9 @@ function LoginPage() {
           email,
           password,
           options: {
-            emailRedirectTo: window.location.origin,
+            emailRedirectTo: returnTo
+              ? window.location.origin + returnTo
+              : window.location.origin,
             data: { display_name: name || email.split("@")[0] },
           },
         });
@@ -75,11 +90,14 @@ function LoginPage() {
     setBusy(true);
     try {
       const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: window.location.origin,
+        redirect_uri: returnTo
+          ? window.location.origin + returnTo
+          : window.location.origin,
       });
       if (result.error) throw result.error;
       if (result.redirected) return;
-      navigate({ to: "/" });
+      if (returnTo) window.location.href = returnTo;
+      else navigate({ to: "/" });
     } catch (err: any) {
       toast.error(err.message ?? "Google sign-in failed");
     } finally {

@@ -17,6 +17,7 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ReadRouteImport } from './routes/read'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
+import { Route as McpRouteImport } from './routes/mcp'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LearnRouteImport } from './routes/learn'
 import { Route as GrammarRouteImport } from './routes/grammar'
@@ -29,6 +30,8 @@ import { Route as LearnDeckIdRouteImport } from './routes/learn.$deckId'
 import { Route as GrammarLessonIdRouteImport } from './routes/grammar.$lessonId'
 import { Route as ApiTtsRouteImport } from './routes/api/tts'
 import { Route as AdminTutorUsageRouteImport } from './routes/admin.tutor-usage'
+import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
+import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 
 const WriteRoute = WriteRouteImport.update({
   id: '/write',
@@ -68,6 +71,11 @@ const ProfileRoute = ProfileRouteImport.update({
 const OnboardingRoute = OnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const McpRoute = McpRouteImport.update({
+  id: '/mcp',
+  path: '/mcp',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -130,12 +138,24 @@ const AdminTutorUsageRoute = AdminTutorUsageRouteImport.update({
   path: '/admin/tutor-usage',
   getParentRoute: () => rootRouteImport,
 } as any)
+const Char91DotwellKnownChar93OauthProtectedResourceRoute =
+  Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
+    id: '/.well-known/oauth-protected-resource',
+    path: '/.well-known/oauth-protected-resource',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
+  id: '/.lovable/oauth/consent',
+  path: '/.lovable/oauth/consent',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/grammar': typeof GrammarRouteWithChildren
   '/learn': typeof LearnRouteWithChildren
   '/login': typeof LoginRoute
+  '/mcp': typeof McpRoute
   '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
   '/read': typeof ReadRouteWithChildren
@@ -144,6 +164,7 @@ export interface FileRoutesByFullPath {
   '/try': typeof TryRoute
   '/tutor': typeof TutorRoute
   '/write': typeof WriteRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin/tutor-usage': typeof AdminTutorUsageRoute
   '/api/tts': typeof ApiTtsRoute
   '/grammar/$lessonId': typeof GrammarLessonIdRoute
@@ -152,10 +173,12 @@ export interface FileRoutesByFullPath {
   '/grammar/': typeof GrammarIndexRoute
   '/learn/': typeof LearnIndexRoute
   '/read/': typeof ReadIndexRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/mcp': typeof McpRoute
   '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -163,6 +186,7 @@ export interface FileRoutesByTo {
   '/try': typeof TryRoute
   '/tutor': typeof TutorRoute
   '/write': typeof WriteRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin/tutor-usage': typeof AdminTutorUsageRoute
   '/api/tts': typeof ApiTtsRoute
   '/grammar/$lessonId': typeof GrammarLessonIdRoute
@@ -171,6 +195,7 @@ export interface FileRoutesByTo {
   '/grammar': typeof GrammarIndexRoute
   '/learn': typeof LearnIndexRoute
   '/read': typeof ReadIndexRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -178,6 +203,7 @@ export interface FileRoutesById {
   '/grammar': typeof GrammarRouteWithChildren
   '/learn': typeof LearnRouteWithChildren
   '/login': typeof LoginRoute
+  '/mcp': typeof McpRoute
   '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
   '/read': typeof ReadRouteWithChildren
@@ -186,6 +212,7 @@ export interface FileRoutesById {
   '/try': typeof TryRoute
   '/tutor': typeof TutorRoute
   '/write': typeof WriteRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin/tutor-usage': typeof AdminTutorUsageRoute
   '/api/tts': typeof ApiTtsRoute
   '/grammar/$lessonId': typeof GrammarLessonIdRoute
@@ -194,6 +221,7 @@ export interface FileRoutesById {
   '/grammar/': typeof GrammarIndexRoute
   '/learn/': typeof LearnIndexRoute
   '/read/': typeof ReadIndexRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -202,6 +230,7 @@ export interface FileRouteTypes {
     | '/grammar'
     | '/learn'
     | '/login'
+    | '/mcp'
     | '/onboarding'
     | '/profile'
     | '/read'
@@ -210,6 +239,7 @@ export interface FileRouteTypes {
     | '/try'
     | '/tutor'
     | '/write'
+    | '/.well-known/oauth-protected-resource'
     | '/admin/tutor-usage'
     | '/api/tts'
     | '/grammar/$lessonId'
@@ -218,10 +248,12 @@ export interface FileRouteTypes {
     | '/grammar/'
     | '/learn/'
     | '/read/'
+    | '/.lovable/oauth/consent'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/login'
+    | '/mcp'
     | '/onboarding'
     | '/profile'
     | '/sitemap.xml'
@@ -229,6 +261,7 @@ export interface FileRouteTypes {
     | '/try'
     | '/tutor'
     | '/write'
+    | '/.well-known/oauth-protected-resource'
     | '/admin/tutor-usage'
     | '/api/tts'
     | '/grammar/$lessonId'
@@ -237,12 +270,14 @@ export interface FileRouteTypes {
     | '/grammar'
     | '/learn'
     | '/read'
+    | '/.lovable/oauth/consent'
   id:
     | '__root__'
     | '/'
     | '/grammar'
     | '/learn'
     | '/login'
+    | '/mcp'
     | '/onboarding'
     | '/profile'
     | '/read'
@@ -251,6 +286,7 @@ export interface FileRouteTypes {
     | '/try'
     | '/tutor'
     | '/write'
+    | '/.well-known/oauth-protected-resource'
     | '/admin/tutor-usage'
     | '/api/tts'
     | '/grammar/$lessonId'
@@ -259,6 +295,7 @@ export interface FileRouteTypes {
     | '/grammar/'
     | '/learn/'
     | '/read/'
+    | '/.lovable/oauth/consent'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -266,6 +303,7 @@ export interface RootRouteChildren {
   GrammarRoute: typeof GrammarRouteWithChildren
   LearnRoute: typeof LearnRouteWithChildren
   LoginRoute: typeof LoginRoute
+  McpRoute: typeof McpRoute
   OnboardingRoute: typeof OnboardingRoute
   ProfileRoute: typeof ProfileRoute
   ReadRoute: typeof ReadRouteWithChildren
@@ -274,8 +312,10 @@ export interface RootRouteChildren {
   TryRoute: typeof TryRoute
   TutorRoute: typeof TutorRoute
   WriteRoute: typeof WriteRoute
+  Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   AdminTutorUsageRoute: typeof AdminTutorUsageRoute
   ApiTtsRoute: typeof ApiTtsRoute
+  DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -334,6 +374,13 @@ declare module '@tanstack/react-router' {
       path: '/onboarding'
       fullPath: '/onboarding'
       preLoaderRoute: typeof OnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mcp': {
+      id: '/mcp'
+      path: '/mcp'
+      fullPath: '/mcp'
+      preLoaderRoute: typeof McpRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -420,6 +467,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminTutorUsageRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/.well-known/oauth-protected-resource': {
+      id: '/.well-known/oauth-protected-resource'
+      path: '/.well-known/oauth-protected-resource'
+      fullPath: '/.well-known/oauth-protected-resource'
+      preLoaderRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.lovable/oauth/consent': {
+      id: '/.lovable/oauth/consent'
+      path: '/.lovable/oauth/consent'
+      fullPath: '/.lovable/oauth/consent'
+      preLoaderRoute: typeof DotlovableOauthConsentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -465,6 +526,7 @@ const rootRouteChildren: RootRouteChildren = {
   GrammarRoute: GrammarRouteWithChildren,
   LearnRoute: LearnRouteWithChildren,
   LoginRoute: LoginRoute,
+  McpRoute: McpRoute,
   OnboardingRoute: OnboardingRoute,
   ProfileRoute: ProfileRoute,
   ReadRoute: ReadRouteWithChildren,
@@ -473,9 +535,22 @@ const rootRouteChildren: RootRouteChildren = {
   TryRoute: TryRoute,
   TutorRoute: TutorRoute,
   WriteRoute: WriteRoute,
+  Char91DotwellKnownChar93OauthProtectedResourceRoute:
+    Char91DotwellKnownChar93OauthProtectedResourceRoute,
   AdminTutorUsageRoute: AdminTutorUsageRoute,
   ApiTtsRoute: ApiTtsRoute,
+  DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
